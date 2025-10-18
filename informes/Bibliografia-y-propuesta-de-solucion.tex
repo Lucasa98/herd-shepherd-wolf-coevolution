@@ -1,0 +1,77 @@
+\documentclass[final]{article}
+\usepackage[numbers,sort&compress]{natbib} % formato de citas
+\usepackage{neurips}            % estilo de la conferencia NeurIPS
+\usepackage[spanish]{babel}     % definiciones para el español
+\usepackage{graphicx}           % para insertar figuras
+\usepackage{amsmath,amssymb}    % más símbolos útiles 
+%\usepackage{todonotes}          % notas en el documento
+\usepackage[hidelinks]{hyperref}% para los links
+\usepackage[ruled,vlined,lined,linesnumbered,onelanguage]{algorithm2e} % algoritmos
+\usepackage{multirow}           % algunas mejoras para las tablas
+\usepackage{booktabs}
+
+
+\begin{document}
+\def\tablename{Tabla}          % (sino les pone Cuadro)
+
+\title{Proyecto final creativo:\\
+    Bibliografía y propuesta de solución}
+
+\author{G. Cagnola, F. G. Hergenreder y L. Saurin \\
+        Facultad de Ingeniería y Ciencias Hídricas,
+        Universidad Nacional del Litoral \\
+        Instituto de Investigación en Señales, Sistemas e Inteligencia Computacional, UNL-CONICET}
+
+\maketitle
+
+\begin{abstract}
+Muchas ovejas son criadas por pastoreo, que consiste en dejarlas desplazarce libremente y consumir vegetación silveste.
+Esto las expone a predadores, como los lobos. Aquí entra en acción el perro pastor, cuyo objetivo es el de proteger el rebaño
+de posibles amenazas, y guiar y controlar su movimiento durante los desplazamientos.\\
+El objetivo de este proyecto es modelar el comportamiento de un rebaño de ovejas y una manada de lobos (dinámica predador-presa)
+para luego entrenar perror pastores para el cuidado y control del desplazamiento del rebaño.
+\end{abstract}
+
+%==========================================================
+%==========================================================
+\section{Tópicos involucrados (no se que titulo poner, marco teórico?)}
+
+\subsection{Sistemas Multiagente (MAS - Multi-agent Systems)}
+Necesario para el modelado de múltiples entidaded autónomas, la comunicación, coordinación y resolución de conflictos entre agentes y
+lograr a partir de interacciones locales un comportamiento emergente de grupo.
+
+\subsection{Algoritmos coevolutivos (Coevolutionary algorithms)}
+Para lograr evolucionar múltiples poblaciones simultaneamente, necesitamos hacer uso de algorítmos genéticos y estrategias evolutivas.
+El comportamiento de cada especie se adapta en respuesta a las otras, llevando una dinámica de predador-presa o cooperación.
+
+\subsection{Aprendizaje por refuerzo (Reinforcement Learning - RL)}
+Las ovejas aprenden a maximizar la supervivencia, mientras los perros aprenden a maximizar la supervivencia de las ovejas y a lograr
+guiarlas a un objetivo, y los lobos aprenden a cazar ovejas
+
+\subsection{Inteligencia de enjambre (Swarm Intelligence)}
+El movimiento de rebaño y la evasión coordinada. Esta relacionado con el modelo Boids, PSO y ACO.
+
+\section{Búsqueda bibliográfica}
+
+\subsection{Palabras clave}
+\begin{itemize}
+    \item Frases y conceptos para buscar papers:
+    \item Coevolutionary multi-agent systems
+    \item Predator-prey coevolution simulation
+    \item Emergent shepherding behavior
+    \item Multi-agent reinforcement learning shepherd problem
+    \item Evolutionary robotics shepherding
+    \item Swarm intelligence in predator-prey environments
+    \item Artificial life ecosystems simulation
+    \item Neuroevolution of cooperative behavior
+    \item Behavioral emergence in multi-agent reinforcement learning
+    \item Competitive coevolution dynamics
+\end{itemize}
+
+\subsection{Bibliografía encontrada}
+
+\begin{itemize}
+    \item Multi-Agent Reinforcement Learning for Shepherding, Abhishek Sankar - 2021
+\end{itemize}
+
+\end{document}
