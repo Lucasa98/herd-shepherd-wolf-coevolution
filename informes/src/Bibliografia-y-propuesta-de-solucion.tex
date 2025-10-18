@@ -25,11 +25,11 @@
 \maketitle
 
 \begin{abstract}
-Muchas ovejas son criadas por pastoreo, que consiste en dejarlas desplazarce libremente y consumir vegetación silveste.
+Muchos rebaños de ovejas son criados por pastoreo, que consiste en dejarlas desplazarce libremente y consumir vegetación silveste.
 Esto las expone a predadores, como los lobos. Aquí entra en acción el perro pastor, cuyo objetivo es el de proteger el rebaño
 de posibles amenazas, y guiar y controlar su movimiento durante los desplazamientos.\\
 El objetivo de este proyecto es modelar el comportamiento de un rebaño de ovejas y una manada de lobos (dinámica predador-presa)
-para luego entrenar perror pastores para el cuidado y control del desplazamiento del rebaño.
+para luego entrenar perros pastores para el cuidado y control del desplazamiento del rebaño.
 \end{abstract}
 
 %==========================================================
@@ -54,8 +54,8 @@ El movimiento de rebaño y la evasión coordinada. Esta relacionado con el model
 \section{Búsqueda bibliográfica}
 
 \subsection{Palabras clave}
+Frases y conceptos para buscar papers:
 \begin{itemize}
-    \item Frases y conceptos para buscar papers:
     \item Coevolutionary multi-agent systems
     \item Predator-prey coevolution simulation
     \item Emergent shepherding behavior
@@ -71,6 +71,11 @@ El movimiento de rebaño y la evasión coordinada. Esta relacionado con el model
 \subsection{Bibliografía encontrada}
 
 \begin{itemize}
+    \item \citet{ReynoldsBoids}: sobre el modelado de bandadas a través de un modelo de comportamiento distribuido. Plantea un "vuelo geométrico" para cada
+    individuo, que modela la conservación de momento, la amortiguación de velocidad (para no exceder una velocidad máxima) y aceleración máxima. Ademas, modela
+    la coordinación del movimiento de un individuo con sus compañeros de bandada, que consiste en el balance entre el deseo de mantenerse en la bandada y el
+    de no colisionar con otros. El comportamiento que plantea para simular bandadas se basa en tres reglas: evitar colisiones, igualar velocidad y mantenerse
+    cerca de la bandada.
     \item \citet{SankarShepherding}
     \item \citet{NapolitanoShepherding}
     \item \citet{CovoneShepherding}
