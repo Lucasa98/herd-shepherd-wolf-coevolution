@@ -212,7 +212,5 @@ __marimo__/
 *.synctex.gz
 *.bbl
 *.blg
-informes/base.tex
-informes/AUCPR2b.pdf
-informes/base.pdf
-informes/e2e_v26.pdf
+informes/src/base.tex
+informes/src/*.pdf
