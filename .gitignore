@@ -210,3 +210,9 @@ __marimo__/
 *.fls
 *.out
 *.synctex.gz
+*.bbl
+*.blg
+informes/base.tex
+informes/AUCPR2b.pdf
+informes/base.pdf
+informes/e2e_v26.pdf
