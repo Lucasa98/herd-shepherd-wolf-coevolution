@@ -23,20 +23,20 @@ Trabajo Final Creativo de Inteligencia Computacion (2025, FICH-UNL)
 
 ## TO-DO
 
-[ ] Simulacion `sim/`:
-    [ ] `world.py`
-    [ ] `entities.py`
-    [ ] `renderer.py`
-    [ ] `sheep.py`
-    [ ] `shepherd.py`
-    [ ] `wolf.py`
-[ ] Modelos `models/`:
-    [ ] `agent.py`
-    [ ] `sheep.py`
-    [ ] `dog.py`
-    [ ] `wolf.py`
-[ ] `scripts/train_model.py` para entrenar el modelo.
-[ ] `scripts/run_sim.py` para correr la simulacion.
+- [ ] Simulacion `sim/`:
+    - [ ] `world.py`
+    - [ ] `entities.py`
+    - [ ] `renderer.py`
+    - [ ] `sheep.py`
+    - [ ] `shepherd.py`
+    - [ ] `wolf.py`
+- [ ] Modelos `models/`:
+    - [ ] `agent.py`
+    - [ ] `sheep.py`
+    - [ ] `dog.py`
+    - [ ] `wolf.py`
+- [ ] `scripts/train_model.py` para entrenar el modelo.
+- [ ] `scripts/run_sim.py` para correr la simulacion.
 
 # Referencia
 
