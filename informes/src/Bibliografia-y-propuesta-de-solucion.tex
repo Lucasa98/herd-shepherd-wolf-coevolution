@@ -26,70 +26,70 @@
 
 \begin{abstract}
 Muchos rebaños de ovejas son criados por pastoreo, que consiste en dejarlas desplazarce libremente y consumir vegetación silveste.
-Esto las expone a predadores, como los lobos. Aquí entra en acción el perro pastor, cuyo objetivo es el de proteger el rebaño
+Aquí entra en acción el perro pastor, cuyo objetivo es el de proteger el rebaño
 de posibles amenazas, y guiar y controlar su movimiento durante los desplazamientos.\\
-El objetivo de este proyecto es modelar el comportamiento de un rebaño de ovejas y una manada de lobos (dinámica predador-presa)
-para luego entrenar perros pastores para el cuidado y control del desplazamiento del rebaño.
+El objetivo de este proyecto es el entrenamiento de agentes "pastores", con la finalidad explorar estrategias que podrían usarse para la evacuación de multitudes.
 \end{abstract}
 
-%==========================================================
-%==========================================================
-\section{Tópicos involucrados (no se que titulo poner, marco teórico?)}
+\section{Bibliografía seleccionada}
+En la búsqueda de estrategias que permitan modelar comportamientos colectivos complejos dentro de sistemas multiagente, el problema del pastoreo
+(shepherding problem) se ha convertido en un caso de estudio fundamental para el análisis y la síntesis de comportamientos emergentes coordinados.
+Este problema consiste en el diseño de uno o varios agentes “pastores” que deben guiar a un conjunto de agentes “rebaño” hacia una región objetivo
+o mantenerlos agrupados, sin control directo sobre cada individuo. Su interés radica no solo en las aplicaciones prácticas —como la robótica cooperativa,
+la gestión de drones o el control de multitudes—, sino también en su valor como entorno de simulación para estudiar la autoorganización y cooperación
+emergente en sistemas distribuidos.
 
-\subsection{Sistemas Multiagente (MAS - Multi-agent Systems)}
-Necesario para el modelado de múltiples entidaded autónomas, la comunicación, coordinación y resolución de conflictos entre agentes y
-lograr a partir de interacciones locales un comportamiento emergente de grupo.
+Años más tarde, \citet{Strombom} abordaron específicamente el problema del pastoreo en su trabajo “Solving the shepherding problem: heuristics
+for herding autonomous, interacting agents”. Allí presentan un modelo heurístico que descompone el comportamiento del pastor en dos subcomportamientos
+principales: collecting (reunir al rebaño disperso) y driving (guiar al grupo hacia el objetivo). Este enfoque heurístico logró replicar comportamientos
+observados en animales reales y sentó una base sólida para aproximaciones posteriores que buscan automatizar el aprendizaje de estas estrategias mediante
+técnicas de inteligencia computacional.
 
-\subsection{Algoritmos coevolutivos (Coevolutionary algorithms)}
-Para lograr evolucionar múltiples poblaciones simultaneamente, necesitamos hacer uso de algorítmos genéticos y estrategias evolutivas.
-El comportamiento de cada especie se adapta en respuesta a las otras, llevando una dinámica de predador-presa o cooperación.
+Más recientemente, el avance del aprendizaje por refuerzo (Reinforcement Learning, RL) ha impulsado el desarrollo de soluciones más adaptativas y menos
+dependientes de heurísticas predefinidas. En “Emergent Cooperative Strategies for Multi-Agent Shepherding via Reinforcement Learning”, \citet{NapolitanoShepherding} exploran cómo los agentes pastores pueden aprender comportamientos cooperativos de manera emergente a través de un esquema de aprendizaje por refuerzo multiagente (Multi-Agent Reinforcement Learning, MARL). Su estudio demuestra que se pueden descubrir estrategia de cooperación espontánea sin programar explícitamente roles, con una adecuada definición de recompensas.
 
-\subsection{Aprendizaje por refuerzo (Reinforcement Learning - RL)}
-Las ovejas aprenden a maximizar la supervivencia, mientras los perros aprenden a maximizar la supervivencia de las ovejas y a lograr
-guiarlas a un objetivo, y los lobos aprenden a cazar ovejas
+En una línea complementaria, Covone et al. (2025) presentan “Hierarchical Policy-Gradient Reinforcement Learning for Multi-Agent Shepherding Control
+of Non-Cohesive Targets” [2], donde proponen una arquitectura jerárquica basada en gradiente de políticas. Este enfoque introduce un control de alto
+nivel encargado de decidir entre las fases de collecting y driving, mientras que un nivel inferior ejecuta políticas locales aprendidas. Los autores
+muestran que esta estructura jerárquica permite un control más eficiente y estable, especialmente en escenarios con rebaños no cohesivos o entornos dinámicos.
 
-\subsection{Inteligencia de enjambre (Swarm Intelligence)}
-El movimiento de rebaño y la evasión coordinada. Esta relacionado con el modelo Boids, PSO y ACO.
+En conjunto, estos trabajos delinean una evolución conceptual del problema del pastoreo: desde las primeras formulaciones basadas en reglas locales y
+simulaciones heurísticas, hacia modelos de aprendizaje emergente cooperativo que aprovechan el poder del aprendizaje por refuerzo para lograr
+comportamientos más realistas, escalables y generalizables. El presente proyecto se enmarca en esta línea, buscando explorar nuevas formas de entrenamiento
+y evaluación de sistemas pastores y rebaños mediante técnicas de inteligencia computacional y simulación multiagente.
 
-\section{Búsqueda bibliográfica}
+\section{Propuesta de solución}
+En conjunto, estos trabajos delinean una evolución conceptual del problema del pastoreo: desde las primeras formulaciones basadas en reglas locales y
+simulaciones heurísticas, hacia modelos de aprendizaje emergente cooperativo que aprovechan el poder del aprendizaje por refuerzo para lograr
+comportamientos más realistas, escalables y generalizables. El presente proyecto se enmarca en esta línea, buscando explorar nuevas formas de entrenamiento
+y evaluación de sistemas pastores y rebaños mediante técnicas de inteligencia computacional y simulación multiagente.
 
-\subsection{Palabras clave}
-Frases y conceptos para buscar papers:
+Tomamos como principales referencias los trabajos de \citet{NapolitanoShepherding} y \citet{CovoneShepherding}, debido a que ambos aplican modelos de inteligencia computacional y son los trabajos más citados respecto al problema de pastoreo. En dichos trabajos, los agentes pastores aprenden estrategias cooperativas a partir de recomensas compartidas y observaciones parciales del entorno, logrando comportamientos de collecting y driving \citep{Strombom} sin supervisión.
+
+En nuestra propuesta buscamos explorar un enfoque alternativo basado en algorítmos genéticos (GA) para el entrenamiento. Los métodos evolutivos resultan adecuados para entornos donde las políticas de control no pueden derivarse analíticamente y se deben explorar múltiples comportamientos emergentes. En lugar de aprender a través de la maximización de una recompensa acumulada, los agentes evolucionarán guiados por una función de aptitud inspirada en la función de recompensa de \citet{NapolitanoShepherding} que mida el desempeño del pastoreo.
+
+Esta función de aptitud considerará métricas tales como:
 \begin{itemize}
-    \item Coevolutionary multi-agent systems
-    \item Predator-prey coevolution simulation
-    \item Emergent shepherding behavior
-    \item Multi-agent reinforcement learning shepherd problem
-    \item Evolutionary robotics shepherding
-    \item Swarm intelligence in predator-prey environments
-    \item Artificial life ecosystems simulation
-    \item Neuroevolution of cooperative behavior
-    \item Behavioral emergence in multi-agent reinforcement learning
-    \item Competitive coevolution dynamics
+    \item La distancia promedio entre el rebaño y el objetivo final.
+    \item El grado de dispersión del grupo durante la tarea.
+    \item El tiempo total necesario para completar el pastoreo.
+    \item Penalizaciones por comportamientos desorganizados o pérdida de individuos.
 \end{itemize}
 
-\subsection{Bibliografía encontrada}
+El entrenamiento se llevará a cabo en un entorno simulado donde tanto los agentes pastores como el rebaño interactúan bajo reglas de movimiento inspiradas en el modelo de \citet{Strombom}. A partir de estas reglas, los agentes pastores podrán aprender dinámicas de control emergentes efectivas, similares a las estrategias descritas en los trabajos citados \citep{Strombom} \citep{NapolitanoShepherding} \citep{CovoneShepherding}.
 
+Una de las motivaciones para utilizar algorítmos genéticos es su capacidad para explorar espacios de búsqueda altamente no-lineales y multimodales, lo que podría facilitar la aparición de comportamientos cooperativos espontáneos sin requerir estructuras de control jerárquica ni el diseño de recomensas complejas. Además, este enfoque permitiría ampliar el estudio a escenarios más amplios de coevolución, como la interacción con depredadores.
+
+Para la evaluación del desempeño se utilizarán métricas relacionadas con el éxito del pastoreo como son:
 \begin{itemize}
-    \item \citet{ReynoldsBoids}: sobre el modelado de bandadas a través de un modelo de comportamiento distribuido. Plantea un "vuelo geométrico" para cada
-    individuo, que modela la conservación de momento, la amortiguación de velocidad (para no exceder una velocidad máxima) y aceleración máxima. Ademas, modela
-    la coordinación del movimiento de un individuo con sus compañeros de bandada, que consiste en el balance entre el deseo de mantenerse en la bandada y el
-    de no colisionar con otros. El comportamiento que plantea para simular bandadas se basa en tres reglas: evitar colisiones, igualar velocidad y mantenerse
-    cerca de la bandada.
-    \item \citet{SankarShepherding}: entrena un grupo de pastores roboticos para guiar a un grupo de agentes oveja hacia un objetivo designato, simulando
-    dinámicas de pastoreo del mundo real. Para simular el comportamiento del rebaño, utiliza el modelo de Strombom \citep{Strombom}.
-    \item \citet{Strombom}: propone un modelo de partículas de atracción-repulsión local para modelar un pastor guiando un grupo de agentes que interactuan entre
-    sí hacia un destino predeterminado.
-    \item \citet{NapolitanoShepherding}: formula el problema de pastoreo usando métodos basados en aprendizaje. Descompone la tarea de pastoreo en dos subtareas:
-    estrategia de conducción (guiar un objetivo a una posición) y estrategia de selección (seleccionar qué individuo guiar). De este estan buenos:
-    \begin{itemize}
-        \item State of the Art \citet[cap. I-A]{NapolitanoShepherding}: da un buen resumen de cómo se tratan de resolver los problemas de oveja-pastor
-        \item Driving sub-task traint \citet[cap. IV-A]{NapolitanoShepherding}: explica el entrenamiento de la sub-tarea de guiado de una oveja, donde define
-        inputs y outputs, además de una arquitectura de red DQN (spoiler, 128 y 64 neuronas en capa oculta) y una función de recompensa.
-        \item 
-    \end{itemize}
-    \item \citet{CovoneShepherding}
+    \item Porcentaje de individuos guiados correctamente.
+    \item Tiempo de convergencia
+    \item Estabilidad del rebaño
 \end{itemize}
+
+La observación del comportamiento en tiempo real se desarrollará sobre entornos de simulación bidimensionales inspirados en el trabajo de \citet{SankarShepherding} y los resultados se visualizarán en entornos similares a los de \citet{NapolitanoShepherding} y \citet{CovoneShepherding} para permitir una comparación directa con sus resultados.
+
+Este enfoque busca evaluar la viabilidad de los métodos evolutivos como alternativa o complemento al aprendizaje por refuerzo en el problema del pastoreo multiagnete, contribuyendo al estudio de estrategias cooperativas dentro de entornos simulados.
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}
