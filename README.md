@@ -9,6 +9,7 @@ Trabajo Final Creativo de Inteligencia Computacion (2025, FICH-UNL)
 1. Instalar [pipx](https://github.com/pypa/pipx?tab=readme-ov-file#on-windows)
 2. Instalar [Poetry](https://python-poetry.org/docs/#installing-with-pipx)
 3. Ejecutar `poetry install`.
+4. Instalar el comando `poetry shell`: `poetry self add poetry-plugin-shell`
 
 ## Uso
 
