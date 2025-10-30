@@ -18,9 +18,8 @@ Trabajo Final Creativo de Inteligencia Computacion (2025, FICH-UNL)
 - Para entrenar un modelo, usar `scripts/train_model.py`.
 - Para correr la simulacion (con visualizador), usar `scripts/run_sim.py`.
 - Usar `__init__.py` en los *package folder* para marcarlos como importables.
-- Instalar [Black](https://marketplace.visualstudio.com/items?itemName=mikoz.black-py) para formatear con estandar PEP8.
 - Usar imports relativos solo entre paquetes del proyecto.
-- **Antes de committear** formatear con `poetry run black .` y `poetry run ruff .`.
+- **Antes de committear** formatear con `poetry run black .` y `poetry run ruff check .`.
 
 ## TO-DO
 

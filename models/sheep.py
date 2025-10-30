@@ -1,6 +1,7 @@
 import numpy as np
 import pygame
 
+
 class Sheep:
     def __init__(self, position, heading, params):
         self.position = np.array(position, dtype=float)
@@ -21,10 +22,14 @@ class Sheep:
                 R_s += diff / dist
 
         # Atraccion al centro de gravedad
-        diffs = np.array([other.position - self.position for other in sheeps if other is not self])
+        diffs = np.array(
+            [other.position - self.position for other in sheeps if other is not self]
+        )
         dists = np.linalg.norm(diffs, axis=1)
-        nearest_idx = np.argsort(dists)[:p["n_neigh"]]
-        C_i = np.mean(diffs[nearest_idx], axis=0) if len(nearest_idx) > 0 else np.zeros(2)
+        nearest_idx = np.argsort(dists)[: p["n_neigh"]]
+        C_i = (
+            np.mean(diffs[nearest_idx], axis=0) if len(nearest_idx) > 0 else np.zeros(2)
+        )
 
         # repulsion local de vecinas
         R_a = np.zeros(2)
