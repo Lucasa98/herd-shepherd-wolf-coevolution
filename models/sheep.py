@@ -1,5 +1,6 @@
 import numpy as np
 import pygame
+from models.shepherd import Shepherd
 
 
 class Sheep:
@@ -8,21 +9,24 @@ class Sheep:
         self.heading = np.array(heading, dtype=float)
         self.params = params
         self.rng = rng
+        self.repelido = False
 
-    def update(self, sheeps, shepherd, dt=1.0):
+    def update(self, sheeps, shepherd: list[Shepherd], dt=1.0):
         p = self.params
 
         # ===== Calcular fuerzas =====
         # repulsion de los shepherds
         R_s = np.zeros(2)
         for s in shepherd:
-            diff = self.position - s
+            diff = self.position - s.position
             dist = np.linalg.norm(diff)
             if dist < p["r_s"]:
                 R_s += diff / dist
 
+        self.repelido = (R_s != np.zeros(2)).any()
+
         # Solo se mueve por random walk o porque el pastor se acerco
-        if (R_s != np.zeros(2)).any() or self.rng.uniform(0,1) < p["r_walk"]:
+        if self.repelido or self.rng.uniform(0,1) < p["r_walk"]:
             # Atraccion al centro de gravedad
             diffs = np.array(
                 [other.position - self.position for other in sheeps if other is not self]
@@ -61,4 +65,5 @@ class Sheep:
             self.position += p["delta"] * self.heading * dt
 
     def draw(self, surface: pygame.Surface):
-        pygame.draw.circle(surface, "red", self.position, 1)
+        color = "blue" if self.repelido else "red"
+        pygame.draw.circle(surface, color, self.position, 1)

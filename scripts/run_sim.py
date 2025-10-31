@@ -16,9 +16,11 @@ params = {
     "rho_a": 2.0,   # fuerza de repulsion (oveja-oveja)
     "rho_s": 1.0,   # fuerza de repulsion (pastor-oveja)
     "e": 0.3,       # ruido angular (componente estocastica)
-    "delta": 1.0,   # distancia por paso
-    "n_neigh": 5,   # numero de vecinos para cohesion
-    "r_walk": 0.1  # probabilidad de random walk
+    "delta": 5.0,   # distancia por paso
+    "n_neigh": 4,   # numero de vecinos para cohesion
+    "r_walk": 0.01,  # probabilidad de random walk
+    # PASTOR
+    "p_delta": 3  # distancia por paso
 }
 # ==========================================================
 
