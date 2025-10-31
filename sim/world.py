@@ -1,7 +1,9 @@
 import numpy as np
 import pygame
-from models.sheep import Sheep
-from models.shepherd import Shepherd
+from models.strombomSheep import StrombomSheep
+from models.followMouseShepherd import FollowMouseShepherd
+from entities.sheep import Sheep
+from entities.shepherd import Shepherd
 
 
 class World:
@@ -13,15 +15,25 @@ class World:
         self.entities = []
 
         # Ovejas
+        sheepModel = StrombomSheep(params, rng)
         N = 50
         rand_positions = rng.uniform(0, 1, size=(N, 2))
         rand_positions[:, 0] *= self.width
         rand_positions[:, 1] *= self.height
-        self.ovejas = [Sheep(rand_positions[i], 0, params, rng) for i in range(50)]
+        self.ovejas = [
+            Sheep(rand_positions[i], [0, 1], model=sheepModel) for i in range(50)
+        ]
         self.entities.extend(self.ovejas)
 
         # Pastor
-        self.pastores = [Shepherd(np.array([self.width, self.height])*rng.uniform(0, 1, size=(2)), 0, params)]
+        shepherdModel = FollowMouseShepherd(params, rng)
+        self.pastores = [
+            Shepherd(
+                np.array([self.width, self.height]) * rng.uniform(0, 1, size=(2)),
+                0,
+                shepherdModel,
+            )
+        ]
         self.entities.extend(self.pastores)
 
     def update(self, dt):
