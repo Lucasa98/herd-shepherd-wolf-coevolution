@@ -8,6 +8,7 @@ from sim.world import World
 rng: Generator = default_rng()
 params = {
     # OVEJAS
+    "N": 50, # numero de ovejas
     "r_s": 65.0,  # radio de repulsion del pastor
     "r_a": 2.0,  # radio de repulsion de otras ovejas
     "h": 0.5,  # coeficiente de inercia
@@ -24,8 +25,8 @@ params = {
 # ==========================================================
 
 pygame.init()
-screen: pygame.Surface = pygame.display.set_mode((800, 600))
-world = World(800, 600, params, rng)
+screen: pygame.Surface = pygame.display.set_mode((256, 256))
+world = World(256, 256, params, rng)
 clock = pygame.time.Clock()
 dt = 0
 

@@ -16,12 +16,12 @@ class World:
 
         # Ovejas
         sheepModel = StrombomSheep(params, rng)
-        N = 50
+        N = params["N"]
         rand_positions = rng.uniform(0, 1, size=(N, 2))
         rand_positions[:, 0] *= self.width
         rand_positions[:, 1] *= self.height
         self.ovejas = [
-            Sheep(rand_positions[i], [0, 1], model=sheepModel) for i in range(50)
+            Sheep(rand_positions[i], [0, 1], model=sheepModel) for i in range(N)
         ]
         self.entities.extend(self.ovejas)
 
