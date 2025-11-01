@@ -1,6 +1,6 @@
 import numpy as np
 import pygame
-from entities.shepherd import Shepherd
+from sim.shepherd import Shepherd
 
 
 class Sheep:
@@ -16,4 +16,5 @@ class Sheep:
 
     def draw(self, surface: pygame.Surface):
         color = "blue" if self.repelido else "red"
-        pygame.draw.circle(surface, color, self.position, 1)
+        pygame.draw.circle(surface, color, self.position, 5)
+        pygame.draw.line(surface, "white", self.position, self.position + self.heading * 10, 1)

@@ -1,6 +1,6 @@
 import numpy as np
-from entities.shepherd import Shepherd
-from entities.sheep import Sheep
+from sim.shepherd import Shepherd
+from sim.sheep import Sheep
 
 
 class StrombomSheep:

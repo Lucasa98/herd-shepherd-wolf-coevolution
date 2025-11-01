@@ -2,8 +2,8 @@ import numpy as np
 import pygame
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
-from entities.sheep import Sheep
-from entities.shepherd import Shepherd
+from sim.sheep import Sheep
+from sim.shepherd import Shepherd
 
 
 class World:

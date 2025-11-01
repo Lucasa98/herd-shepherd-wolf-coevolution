@@ -12,4 +12,5 @@ class Shepherd:
         self.model.update(self, sheeps, shepherd, dt)
 
     def draw(self, surface: pygame.Surface):
-        pygame.draw.circle(surface, "green", self.position, 1)
+        pygame.draw.circle(surface, "green", self.position, 5)
+        pygame.draw.line(surface, "white", self.position, self.position + self.heading * 10, 1)
