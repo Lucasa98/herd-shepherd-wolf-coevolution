@@ -1,8 +1,5 @@
-import pygame
-from pygame.locals import HWSURFACE, DOUBLEBUF, RESIZABLE, VIDEORESIZE
 from numpy.random import default_rng, Generator
 from sim.world import World
-from sim.interface import Interface
 
 # ============================================================
 # ======================== PARAMETROS ========================
