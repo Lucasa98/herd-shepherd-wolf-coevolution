@@ -26,6 +26,7 @@ params = {
     "n_neigh": 7,  # numero de vecinos para cohesion
     "r_walk": 0.05,  # probabilidad de random walk
     # PASTOR
+    "model": "followMouse",
     "p_delta": 1.5,  # distancia por paso
 }
 # ==========================================================

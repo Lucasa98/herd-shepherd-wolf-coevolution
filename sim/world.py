@@ -2,6 +2,7 @@ import numpy as np
 import pygame
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
+from models.nnShepherd import NNShepherdModel, ShepherdNN
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 
@@ -32,7 +33,13 @@ class World:
         self.entities.extend(self.ovejas)
 
         # Pastor
-        shepherdModel = FollowMouseShepherd(params, rng)
+        nn_model = None
+        shepherdModel = None
+        if params["model"] == "NN":
+            nn_model = ShepherdNN()
+            shepherdModel = NNShepherdModel(params, rng, nn_model)
+        else:
+            shepherdModel = FollowMouseShepherd(params, rng)
         self.pastores = [
             Shepherd(
                 np.array([self.width, self.height]) * rng.uniform(0, 1, size=(2)),
