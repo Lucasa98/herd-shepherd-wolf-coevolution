@@ -9,10 +9,11 @@ from sim.world import World
 rng: Generator = default_rng()
 params = {
     # ESCENARIO
-    "w_w": 150,  # ancho
-    "w_h": 150,  # alto
+    "w_w": 300,  # ancho
+    "w_h": 300,  # alto
+    "obj_r": 25,  # radio del objetivo
     # OVEJAS
-    "N": 51,  # numero de ovejas
+    "N": 50,  # numero de ovejas
     "r_s": 65.0,  # radio de repulsion del pastor
     "r_a": 2.0,  # radio de repulsion de otras ovejas
     "h": 0.5,  # coeficiente de inercia
@@ -21,7 +22,7 @@ params = {
     "rho_s": 1.0,  # fuerza de repulsion (pastor-oveja)
     "e": 0.3,  # ruido angular (componente estocastica)
     "delta": 1.0,  # distancia por paso
-    "n_neigh": 50,  # numero de vecinos para cohesion
+    "n_neigh": 7,  # numero de vecinos para cohesion
     "r_walk": 0.05,  # probabilidad de random walk
     # PASTOR
     "p_delta": 1.5,  # distancia por paso
@@ -30,7 +31,7 @@ params = {
 
 pygame.init()
 screen: pygame.Surface = pygame.display.set_mode((600, 600), RESIZABLE)
-world_surface: pygame.Surface = pygame.surface.Surface((150, 150))
+world_surface: pygame.Surface = pygame.surface.Surface((params["w_w"], params["w_h"]))
 world = World(params["w_w"], params["w_h"], params, rng)
 clock = pygame.time.Clock()
 dt = 0
