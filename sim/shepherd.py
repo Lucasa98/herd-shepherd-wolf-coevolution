@@ -8,9 +8,11 @@ class Shepherd:
         self.heading = np.array(heading, dtype=float)
         self.model = model
 
-    def update(self, sheeps, shepherd, dt=1.0):
-        self.model.update(self, sheeps, shepherd, dt)
+    def update(self, sheeps, shepherd):
+        self.model.update(self, sheeps, shepherd)
 
     def draw(self, surface: pygame.Surface):
         pygame.draw.circle(surface, "green", self.position, 1)
-        pygame.draw.line(surface, "white", self.position, self.position + self.heading * 10, 1)
+        pygame.draw.line(
+            surface, "white", self.position, self.position + self.heading * 10, 1
+        )

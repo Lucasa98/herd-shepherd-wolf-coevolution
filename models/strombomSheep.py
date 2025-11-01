@@ -8,9 +8,7 @@ class StrombomSheep:
         self.params = params
         self.rng = rng
 
-    def update(
-        self, sheep: Sheep, sheeps: list[Sheep], shepherds: list[Shepherd], dt=1.0
-    ):
+    def update(self, sheep: Sheep, sheeps: list[Sheep], shepherds: list[Shepherd]):
         p = self.params
 
         # ===== Calcular fuerzas =====
@@ -37,7 +35,11 @@ class StrombomSheep:
                 R_a += diff / dist
 
         # Si no hay repulsion de ningun tipo ni random walk, TERMINAMOS
-        if not sheep.pastoreada and (R_a == np.zeros(2)).all() and self.rng.uniform(0, 1) > p["r_walk"]:
+        if (
+            not sheep.pastoreada
+            and (R_a == np.zeros(2)).all()
+            and self.rng.uniform(0, 1) > p["r_walk"]
+        ):
             return
 
         # ruido
@@ -62,17 +64,17 @@ class StrombomSheep:
             )
 
         # ===== Combinar =====
-        H_new = (p["h"] * sheep.heading + p["e"] * noise)
+        H_new = p["h"] * sheep.heading + p["e"] * noise
 
         if sheep.pastoreada:
-            H_new += (p["c"] * C_i + p["rho_s"] * R_s)
+            H_new += p["c"] * C_i + p["rho_s"] * R_s
 
         if repelida:
-            H_new += (p["rho_a"] * R_a)
+            H_new += p["rho_a"] * R_a
 
         # Normalizar
         H_new /= np.linalg.norm(H_new) + 1e-8
         sheep.heading = H_new
 
         # ===== Update =====
-        sheep.position += p["delta"] * sheep.heading * dt
+        sheep.position += p["delta"] * sheep.heading

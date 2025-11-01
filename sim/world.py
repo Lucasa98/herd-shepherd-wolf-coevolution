@@ -36,9 +36,9 @@ class World:
         ]
         self.entities.extend(self.pastores)
 
-    def update(self, dt):
+    def update(self):
         for e in self.entities:
-            e.update(self.ovejas, self.pastores, dt)
+            e.update(self.ovejas, self.pastores)
 
     def draw(self, surface: pygame.Surface):
         for e in self.entities:
