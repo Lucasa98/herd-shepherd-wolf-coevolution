@@ -19,7 +19,9 @@ class Evaluador:
 
         # inicializar entorno
         nn_model = ShepherdNN(
-            self.params["n_inputs"], self.params["hidden_lay_1"], self.params["hidden_lay_2"]
+            self.params["n_inputs"],
+            self.params["hidden_lay_1"],
+            self.params["hidden_lay_2"],
         )
         torch.nn.utils.vector_to_parameters(
             weight_vec, nn_model.parameters()

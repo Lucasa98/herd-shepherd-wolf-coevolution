@@ -11,14 +11,20 @@ rng: np.random.Generator = np.random.default_rng()
 
 ventana = params["poblacion"] // params["progenitores"]
 params["n_inputs"] = (
-    2 * params["pers_ovejas"] + 2 * params["pers_pastores"] + 4  # ovejas, otros pastores, el objetivo y su propia posicion
+    2 * params["pers_ovejas"]       # ovejas
+    + 2 * params["pers_pastores"]   # otros pastores
+    + 4  # el objetivo y su propia posicion
 )
 params["n_bits"] = 8 * (
     (
-        params["n_inputs"] * params["hidden_lay_1"] + params["hidden_lay_1"]  # capa oculta 1: por cada neurona, un peso por input y un bias
+        params["n_inputs"] * params["hidden_lay_1"]
+        + params[
+            "hidden_lay_1"
+        ]  # capa oculta 1: por cada neurona, un peso por input y un bias
     )
     + (
-        params["hidden_lay_1"] * params["hidden_lay_2"] + params["hidden_lay_2"]  # capa oculta 2
+        params["hidden_lay_1"] * params["hidden_lay_2"]
+        + params["hidden_lay_2"]  # capa oculta 2
     )
     + (params["hidden_lay_2"] * 2 + 2)  # capa de salida: 2 neuronas de salida, FIJO
 )
