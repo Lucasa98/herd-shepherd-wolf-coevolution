@@ -1,45 +1,13 @@
+import yaml
 import numpy as np
 from tqdm import tqdm
 from training.evaluador import Evaluador
 
-# ============================================================
-# ======================== PARAMETROS ========================
-# ============================================================
+
+with open("config.yaml") as f:
+    params = yaml.safe_load(f)
+
 rng: np.random.Generator = np.random.default_rng()
-params = {
-    # ESCENARIO
-    "w_w": 300,  # ancho
-    "w_h": 300,  # alto
-    "obj_r": 25,  # radio del objetivo
-    # OVEJAS
-    "N": 50,  # numero de ovejas
-    "r_s": 65.0,  # radio de repulsion del pastor
-    "r_a": 2.0,  # radio de repulsion de otras ovejas
-    "h": 0.5,  # coeficiente de inercia
-    "c": 1.05,  # coeficiente de cohesion
-    "rho_a": 2.0,  # fuerza de repulsion (oveja-oveja)
-    "rho_s": 1.0,  # fuerza de repulsion (pastor-oveja)
-    "e": 0.3,  # ruido angular (componente estocastica)
-    "delta": 1.0,  # distancia por paso
-    "n_neigh": 7,  # numero de vecinos para cohesion
-    "r_walk": 0.05,  # probabilidad de random walk
-    # PASTOR
-    "p_delta": 1.5,  # distancia por paso
-    "model": "NN",  # modelo de comportamiento del pastor (followMouse | NN)
-    "min_w": -64,
-    "max_w": 64,
-    "pers_ovejas": 5,  # ovejas percibidas por el pastor
-    "pers_pastores": 0,  # otros pastores percibidos por el pastor
-    "hidden_lay_1": 8,  # neuronas de la primer capa oculta
-    "hidden_lay_2": 4,  # neuronas de la segunda capa oculta
-    # ENTRENAMIENTO
-    "max_steps": 2000,  # numero maximo de pasos por simulacion
-    "poblacion": 5,  # individuos por poblacion
-    "generaciones": 5,  # generaciones
-    "progenitores": 2,  # progenitores por generacion
-    "mutacion": 0.05,  # probabilidad de mutacion
-}
-# ==========================================================
 
 evaluador = Evaluador(params, rng)
 fit_history = np.empty((0, 2), dtype=float)
