@@ -26,11 +26,8 @@ class World:
         nn_model = None
         shepherdModel = None
         if params["model"] == "NN":
-            n_inputs = (
-                params["pers_ovejas"] + params["pers_pastores"] + 2
-            )  # ovejas, otros pastores, el objetivo y su propia posicion
             nn_model = ShepherdNN(
-                n_inputs, params["hidden_lay_1"], params["hidden_lay_2"]
+                params["n_inputs"], params["hidden_lay_1"], params["hidden_lay_2"]
             )
             shepherdModel = NNShepherdModel(params, rng, nn_model)
         else:

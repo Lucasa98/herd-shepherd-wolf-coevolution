@@ -9,24 +9,26 @@ with open("config.yaml") as f:
 
 rng: np.random.Generator = np.random.default_rng()
 
-evaluador = Evaluador(params, rng)
-fit_history = np.empty((0, 2), dtype=float)
 ventana = params["poblacion"] // params["progenitores"]
-n_inputs = (
-    params["pers_ovejas"] + params["pers_pastores"] + 2
-)  # ovejas, otros pastores, el objetivo y su propia posicion
-n_bits = 8 * (
+params["n_inputs"] = (
+    2 * params["pers_ovejas"] + 2 * params["pers_pastores"] + 4  # ovejas, otros pastores, el objetivo y su propia posicion
+)
+params["n_bits"] = 8 * (
     (
-        n_inputs * params["hidden_lay_1"] + params["hidden_lay_1"]
-    )  # capa oculta 1: por cada neurona, un peso por input y un bias
+        params["n_inputs"] * params["hidden_lay_1"] + params["hidden_lay_1"]  # capa oculta 1: por cada neurona, un peso por input y un bias
+    )
     + (
-        params["hidden_lay_1"] * params["hidden_lay_2"] + params["hidden_lay_2"]
-    )  # capa oculta 2
+        params["hidden_lay_1"] * params["hidden_lay_2"] + params["hidden_lay_2"]  # capa oculta 2
+    )
     + (params["hidden_lay_2"] * 2 + 2)  # capa de salida: 2 neuronas de salida, FIJO
 )
 
+evaluador = Evaluador(params, rng)
+fit_history = np.empty((0, 2), dtype=float)
+
+# ======================= EVOLUCION =======================
 # 1) inicializar la poblacion al azar
-poblacion = rng.integers(0, 2, (params["poblacion"], n_bits), dtype=np.uint8)
+poblacion = rng.integers(0, 2, (params["poblacion"], params["n_bits"]), dtype=np.uint8)
 
 # 2) calcular fitness
 fit = [
@@ -39,7 +41,7 @@ fit_elite = fit[sorted[-1]]
 fit_history = np.vstack([fit_history, [0, fit_elite]])
 for g in tqdm(range(params["generaciones"])):
     # 1) elegir progenitores: un elite y el resto por ventana
-    progenitores = np.empty((params["progenitores"], n_bits), dtype=np.uint8)
+    progenitores = np.empty((params["progenitores"], params["n_bits"]), dtype=np.uint8)
     progenitores[0] = poblacion[sorted[-1]]  # elite
 
     v = ventana
@@ -55,7 +57,7 @@ for g in tqdm(range(params["generaciones"])):
         )  # tomar progenitores al azar
 
         # punto de cruza: elegir inicio y fin del segmento a cruzar
-        c1, c2 = np.sort(rng.integers(0, n_bits, 2))
+        c1, c2 = np.sort(rng.integers(0, params["n_bits"], 2))
 
         # cruzar: segmento del padre 1 y el resto del padre 2
         poblacion[i, :c1] = progenitores[p2, :c1]  # antes de c1
@@ -64,7 +66,7 @@ for g in tqdm(range(params["generaciones"])):
 
         # mutar
         if rng.random() < params["mutacion"]:
-            b = rng.integers(0, n_bits)
+            b = rng.integers(0, params["n_bits"])
             poblacion[i, b] ^= 1  # invierte 0 a 1 y viceversa
 
     # 3) evaluar fitness

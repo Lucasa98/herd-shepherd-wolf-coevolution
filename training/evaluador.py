@@ -18,11 +18,8 @@ class Evaluador:
         )
 
         # inicializar entorno
-        n_inputs = (
-            self.params["pers_ovejas"] + self.params["pers_pastores"] + 2
-        )  # ovejas, otros pastores, el objetivo y su propia posicion
         nn_model = ShepherdNN(
-            n_inputs, self.params["hidden_lay_1"], self.params["hidden_lay_2"]
+            self.params["n_inputs"], self.params["hidden_lay_1"], self.params["hidden_lay_2"]
         )
         torch.nn.utils.vector_to_parameters(
             weight_vec, nn_model.parameters()
@@ -44,6 +41,7 @@ class Evaluador:
         )
         diff = self.world.centroGravedadOvejas() - self.world.objetivo_c
         fit += 1.0 / np.dot(diff, diff)
+        return fit
 
     def gen_to_weights(self, gen: np.ndarray[np.uint8], min, max) -> torch.Tensor:
         """decodificar un arreglo 1D de bits a un tensor 1D de flotantes en [min, max]"""

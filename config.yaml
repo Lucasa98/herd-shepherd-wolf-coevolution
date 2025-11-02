@@ -17,8 +17,8 @@ r_walk: 0.05  # probabilidad de random walk
 # PASTOR
 p_delta: 1.5  # distancia por paso
 model: "NN"  # modelo de comportamiento del pastor (followMouse | NN)
-min_w: -64
-max_w: 64
+min_w: -64  # valor minimo de peso
+max_w: 64  # valor maximo de peso
 pers_ovejas: 5  # ovejas percibidas por el pastor
 pers_pastores: 0  # otros pastores percibidos por el pastor
 hidden_lay_1: 8  # neuronas de la primer capa oculta
