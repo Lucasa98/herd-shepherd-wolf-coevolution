@@ -10,7 +10,7 @@ class Sheep:
         self.model = model
         self.pastoreada = False
 
-    def update(self, sheeps, shepherd: list[Shepherd]):
+    def update(self, sheeps, shepherd: list[Shepherd], objetivo_c):
         # delegar el comportamiento al modelo
         self.model.update(self, sheeps, shepherd)
 

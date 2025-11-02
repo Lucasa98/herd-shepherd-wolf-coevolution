@@ -10,7 +10,11 @@ class FollowMouseShepherd:
         self.params = params
 
     def update(
-        self, shepherd: Shepherd, sheeps: list[Sheep], shepherds: list[Shepherd]
+        self,
+        shepherd: Shepherd,
+        sheeps: list[Sheep],
+        shepherds: list[Shepherd],
+        objetivo_c,
     ):
         p = self.params
         disp_size = pygame.display.get_surface().get_size()
