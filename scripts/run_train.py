@@ -11,8 +11,8 @@ rng: np.random.Generator = np.random.default_rng()
 
 ventana = params["poblacion"] // params["progenitores"]
 params["n_inputs"] = (
-    2 * params["pers_ovejas"]       # ovejas
-    + 2 * params["pers_pastores"]   # otros pastores
+    2 * params["pers_ovejas"]  # ovejas
+    + 2 * params["pers_pastores"]  # otros pastores
     + 4  # el objetivo y su propia posicion
 )
 params["n_bits"] = 8 * (
