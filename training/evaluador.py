@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from models.nnShepherd import ShepherdNN, NNShepherdModel
+from models.NNShepherd import ShepherdNN, NNShepherdModel
 from sim.world import World
 
 

@@ -2,7 +2,7 @@ import numpy as np
 import pygame
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
-from models.nnShepherd import NNShepherdModel, ShepherdNN
+from models.NNShepherd import NNShepherdModel, ShepherdNN
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 
