@@ -1,9 +1,11 @@
 import multiprocessing as mp
 import yaml
+import os
+import json
 import numpy as np
 from tqdm import tqdm
 from training.evaluador import Evaluador
-
+from datetime import datetime
 
 with open("config.yaml") as f:
     params = yaml.safe_load(f)
@@ -124,3 +126,26 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     print(f"Best fitness: {fit_elite}")
     print("fit history:")
     print(fit_history)
+
+    best_genome = poblacion[sorted[-1]]
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    save_dir = "models/trained"
+    os.makedirs(save_dir, exist_ok=True)
+
+    np.save(os.path.join(save_dir, f"{timestamp}.npy"), best_genome)
+
+    model_info = {
+        "n_inputs": params["n_inputs"],
+        "hidden_lay_1": params["hidden_lay_1"],
+        "hidden_lay_2": params["hidden_lay_2"],
+        "min_w": params["min_w"],
+        "max_w": params["max_w"],
+        "poblacion": params["poblacion"],
+        "progenitores": params["progenitores"],
+        "mutacion": params["mutacion"],
+        "generaciones": params["generaciones"],
+        "best_fitness": float(fit_elite)
+    }
+
+    with open(os.path.join(save_dir, f"{timestamp}.json"), "w") as f:
+        json.dump(model_info, f, indent=2)

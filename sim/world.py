@@ -1,11 +1,41 @@
 import numpy as np
 import pygame
+import torch
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
 from models.NNShepherd import NNShepherdModel, ShepherdNN
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 
+
+def _bits_to_floats(bits, low=-1.0, high=1.0):
+    bits = np.asarray(bits, dtype=np.uint8)
+    if bits.size % 8 != 0:
+        bits = np.pad(bits, (0, 8 - bits.size % 8))
+    bytes_arr = bits.reshape(-1, 8)
+    vals = bytes_arr.dot(np.array([128, 64, 32, 16, 8, 4, 2, 1], dtype=np.uint16)).astype(np.float32)
+    vals = low + (high - low) * (vals / 255.0)
+    return vals
+
+
+def _decode_genome_into_model(genome_bits: np.ndarray, model: torch.nn.Module):
+    weights = _bits_to_floats(genome_bits, -1.0, 1.0)
+    state_dict = model.state_dict()
+    total_params = sum(p.numel() for p in state_dict.values())
+
+    if len(weights) < total_params:
+        pad = total_params - len(weights)
+        weights = np.concatenate([weights, np.zeros(pad, dtype=np.float32)])
+    elif len(weights) > total_params:
+        weights = weights[:total_params]
+
+    i = 0
+    new_state = {}
+    for k, v in state_dict.items():
+        n = v.numel()
+        new_state[k] = torch.from_numpy(weights[i:i+n].reshape(v.shape))
+        i += n
+    model.load_state_dict(new_state)
 
 class World:
     def __init__(self, width, height, params, rng: np.random.Generator):
@@ -29,6 +59,9 @@ class World:
             nn_model = ShepherdNN(
                 params["n_inputs"], params["hidden_lay_1"], params["hidden_lay_2"]
             )
+            if "modelo_path" in params and params["modelo_path"]:
+                genome = np.load(params["modelo_path"])
+                _decode_genome_into_model(genome, nn_model)
             shepherdModel = NNShepherdModel(params, rng, nn_model)
         else:
             shepherdModel = FollowMouseShepherd(params, rng)
@@ -70,13 +103,9 @@ class World:
         self.entities.extend(self.ovejas)
 
     def initPastores(self, model):
-        self.pastores = [
-            Shepherd(
-                np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2)),
-                0,
-                model,
-            )
-        ]
+        start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
+        heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
+        self.pastores = [Shepherd(start_pos, heading, model)]
         self.entities.extend(self.pastores)
 
     def initObjetivo(self):

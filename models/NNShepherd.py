@@ -50,16 +50,20 @@ class NNShepherdModel:
 
 
 class ShepherdNN(nn.Module):
-    def __init__(self, input_dim=4, hidden_dim_1=16, hidden_dim_2=16, output_dim=2):
+    # TODO: hacer que no se rompa si le cambias input y output dims
+    def __init__(self, input_dim=4, hidden_dim_1=128, hidden_dim_2=64, output_dim=2):
         super().__init__()
-        # TODO: ajustar masomenos a la arquitectura que usa Napolitano
+        # Napolitano architecture:
+        # 6 input neurons, 
+        # two hidden layers with 128 and 64 neurons respectively, 
+        # both with ReLU activation, and 25 output neurons with linear activation.
+        # (ademas tiene otra version mas grande con 512, 256
         self.net = nn.Sequential(
             nn.Linear(input_dim, hidden_dim_1),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_dim_1, hidden_dim_2),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(hidden_dim_2, output_dim),
-            nn.Tanh(),  # vector direccion en [-1, 1]
         )
 
     def forward(self, x):

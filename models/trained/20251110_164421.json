@@ -1,0 +1,12 @@
+{
+  "n_inputs": 14,
+  "hidden_lay_1": 8,
+  "hidden_lay_2": 4,
+  "min_w": -64,
+  "max_w": 64,
+  "poblacion": 6,
+  "progenitores": 2,
+  "mutacion": 0.05,
+  "generaciones": 5,
+  "best_fitness": 0.0024812681235426397
+}
