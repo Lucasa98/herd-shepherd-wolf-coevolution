@@ -44,9 +44,8 @@ class NNShepherdModel:
         out = self.nn(inputs).detach().numpy().squeeze()
 
         # normalize and move
-        heading = out / (np.linalg.norm(out) + 1e-8)
-        shepherd.heading = heading  # sin inercia. Deberiamos probar con inercia?
-        shepherd.position += self.params["p_delta"] * heading
+        shepherd.heading = out / (np.linalg.norm(out) + 1e-8)
+        shepherd.position += self.params["p_delta"] * shepherd.heading
 
 
 class ShepherdNN(nn.Module):
@@ -64,6 +63,7 @@ class ShepherdNN(nn.Module):
             nn.Linear(hidden_dim_1, hidden_dim_2),
             nn.ReLU(),
             nn.Linear(hidden_dim_2, output_dim),
+            nn.Tanh(),
         )
 
     def forward(self, x):

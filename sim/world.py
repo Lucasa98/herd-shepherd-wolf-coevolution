@@ -48,31 +48,41 @@ class World:
         self.entities = []
 
         # ===== Ovejas =====
-        # TODO: podemos simplemente reubicarlas
-        sheepModel = StrombomSheep(self.params, self.rng)
-        self.initOvejas(sheepModel)
+        # solo reubicamos
+        N = self.params["N"]
+        rand_positions = self.rng.uniform(0, 1, size=(N, 2))
+        rand_positions[:, 0] = rand_positions[:, 0] * self.init_width + self.init_width_offset
+        rand_positions[:, 1] = rand_positions[:, 1] * self.init_height + self.init_height_offset
+        for i, oveja in enumerate(self.ovejas):
+            oveja.position = rand_positions[i]
 
         # ===== Pastor =====
-        self.initPastores(shepherdModel)
+        # solo reubicamos
+        start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
+        heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
+        for i, pastor in enumerate(self.pastores):
+            pastor.position = start_pos
+            pastor.heading = heading
 
         # Objetivo
         self.initObjetivo()
 
     def initOvejas(self, model):
         # posicionar las ovejas separadas de los bordes
-        init_width = self.width * 0.7
-        init_width_offset = self.width * 0.15
-        init_height = self.height * 0.7
-        init_height_offset = self.height * 0.15
+        self.init_width = self.width * 0.7
+        self.init_width_offset = self.width * 0.15
+        self.init_height = self.height * 0.7
+        self.init_height_offset = self.height * 0.15
 
         N = self.params["N"]
         rand_positions = self.rng.uniform(0, 1, size=(N, 2))
-        rand_positions[:, 0] = rand_positions[:, 0] * init_width + init_width_offset
-        rand_positions[:, 1] = rand_positions[:, 1] * init_height + init_height_offset
+        rand_positions[:, 0] = rand_positions[:, 0] * self.init_width + self.init_width_offset
+        rand_positions[:, 1] = rand_positions[:, 1] * self.init_height + self.init_height_offset
         self.ovejas = [Sheep(rand_positions[i], [0, 1], model=model) for i in range(N)]
         self.entities.extend(self.ovejas)
 
     def initPastores(self, model):
+        # TODO: agregar la posibilidad de mas pastores
         start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
         heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
         self.pastores = [Shepherd(start_pos, heading, model)]

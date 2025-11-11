@@ -17,15 +17,15 @@ r_walk: 0.05  # probabilidad de random walk
 # PASTOR
 p_delta: 1.5  # distancia por paso
 model: "NN"  # modelo de comportamiento del pastor (followMouse | NN)
-min_w: -64  # valor minimo de peso
-max_w: 64  # valor maximo de peso
+min_w: -7  # valor minimo de peso
+max_w: 8  # valor maximo de peso
 pers_ovejas: 5  # ovejas percibidas por el pastor
 pers_pastores: 0  # otros pastores percibidos por el pastor
 hidden_lay_1: 8  # neuronas de la primer capa oculta
 hidden_lay_2: 4  # neuronas de la segunda capa oculta
 # ENTRENAMIENTO
 max_steps: 2000  # numero maximo de pasos por simulacion
-poblacion: 6  # individuos por poblacion
-generaciones: 5  # generaciones
-progenitores: 2  # progenitores por generacion
+poblacion: 500  # individuos por poblacion
+generaciones: 1000  # generaciones
+progenitores: 50  # progenitores por generacion
 mutacion: 0.05  # probabilidad de mutacion
