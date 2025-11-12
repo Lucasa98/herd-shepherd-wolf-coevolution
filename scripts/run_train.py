@@ -57,6 +57,11 @@ def evaluar_poblacion(poblacion, in_q, out_q):
 # ======================= EVOLUCION =======================
 
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
+    # para dar prioridad en windows
+    import psutil
+    p = psutil.Process(os.getpid())
+    p.nice(psutil.HIGH_PRIORITY_CLASS)
+    # =============================
     N_WORKERS = 7  # OJO!
     # Arrancar workers
     in_q, out_q = mp.Queue(), mp.Queue()
