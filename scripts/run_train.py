@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import yaml
 import os
+import time
 import json
 import numpy as np
 from tqdm import tqdm
@@ -56,7 +57,7 @@ def evaluar_poblacion(poblacion, in_q, out_q):
 # ======================= EVOLUCION =======================
 
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
-    N_WORKERS = 6  # OJO!
+    N_WORKERS = 7  # OJO!
     # Arrancar workers
     in_q, out_q = mp.Queue(), mp.Queue()
     workers: list[mp.Process] = [
@@ -78,6 +79,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     fit_elite = fit[sorted[-1]]
     fit_history = np.vstack([fit_history, [0, fit_elite]])
+    t_ini = time.perf_counter()
     for g in tqdm(range(params["generaciones"])):
         # 1) elegir progenitores: un elite y el resto por ventana
         progenitores = np.empty(
@@ -117,6 +119,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             fit_elite = fit[sorted[-1]]
             fit_history = np.vstack([fit_history, [g + 1, fit_elite]])
 
+    t_total = time.perf_counter() - t_ini
+
     # Detener workers
     for _ in range(N_WORKERS):
         in_q.put(None)
@@ -144,7 +148,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         "progenitores": params["progenitores"],
         "mutacion": params["mutacion"],
         "generaciones": params["generaciones"],
-        "best_fitness": float(fit_elite)
+        "best_fitness": float(fit_elite),
+        "tiempo": t_total
     }
 
     with open(os.path.join(save_dir, f"{timestamp}.json"), "w") as f:

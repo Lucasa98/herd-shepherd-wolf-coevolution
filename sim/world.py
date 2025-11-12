@@ -61,6 +61,7 @@ class World:
         start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
         heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
         for i, pastor in enumerate(self.pastores):
+            pastor.count_pastoreando = 0
             pastor.position = start_pos
             pastor.heading = heading
 
@@ -104,6 +105,8 @@ class World:
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):
+        # Queria updatear ovejas y despues lobos en loops distintos pero da error, no se por que
+        # de todas formas DEBERIA updatear primero ovejas porque se agregan antes al array
         for e in self.entities:
             e.update(self.ovejas, self.pastores, self.objetivo_c)
 
@@ -130,3 +133,32 @@ class World:
     def centroGravedadOvejas(self):
         pos = np.array([o.position for o in self.ovejas])
         return np.mean(pos, axis=0)
+
+    def ovejasGuiadasRate(self):
+        """La tasa de ovejas dentro del objetivo. 1 -> todas las ovejas dentro de l objetivo"""
+        r_2 = self.objetivo_r * self.objetivo_r
+        # A la primera que encuentra afuera, retorna falso
+        c = 0.0
+        for o in self.ovejas:
+            diff = o.position - self.objetivo_c
+            if np.dot(diff, diff) <= r_2:
+                c += 1.0
+
+        # TODO: se podria mejorar calculando frac=1/self.params["N"] al inicio
+        # y haciendo simplemente c += frac
+        return c / self.params["N"]
+
+    def drivingRate(self):
+        """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor)"""
+        c = 0.0
+        for p in self.pastores:
+            c += p.count_pastoreando
+
+        return c / self.ticks
+
+    def repitePosiciones(self):
+        for p in self.pastores:
+            if p.count_pos_repetida > self.params['max_reps']:
+                return True
+
+        return False

@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from sim.shepherd import Shepherd
 
 
 class NNShepherdModel:
@@ -9,7 +10,7 @@ class NNShepherdModel:
         self.rng = rng
         self.nn = nn_model
 
-    def update(self, shepherd, sheeps, shepherds, objetivo_c):
+    def update(self, shepherd: Shepherd, sheeps, shepherds, objetivo_c):
         """
         Actualiza la posición del pastor según la salida de la red neuronal
         Entradas normalizadas y relativas al pastor 
@@ -74,6 +75,8 @@ class NNShepherdModel:
 
         #MOVER PASTOR
         shepherd.heading = out / (np.linalg.norm(out) + 1e-8)
+        # mover
+        shepherd.prev_pos = shepherd.position.copy()
         shepherd.position += self.params["p_delta"] * shepherd.heading
 
 

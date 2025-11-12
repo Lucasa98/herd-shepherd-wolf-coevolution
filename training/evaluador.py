@@ -17,36 +17,27 @@ class Evaluador:
         self.world.restart(shepherdModel)
 
         c = 0
-        while c < self.params["max_steps"] and self.world.ticks_to_finish is None:
+        while c < self.params["max_steps"] and self.world.ticks_to_finish is None and not self.world.repitePosiciones():
             self.world.update()
             c += 1
 
-        # === NUEVA FUNCIÓN DE FITNESS NORMALIZADA ===
-        # Centro de masa de las ovejas y objetivo normalizados
-        w_w, w_h = self.params["w_w"], self.params["w_h"]
-        cg = self.world.centroGravedadOvejas() / np.array([w_w, w_h])
-        objetivo = self.world.objetivo_c / np.array([w_w, w_h])
+        # ===== FITNESS =====
+        fit = 2.0
 
-        # Distancia al objetivo en espacio normalizado
-        dist = np.linalg.norm(cg - objetivo)
+        # si se quedo trabado, early-stopping y mal fitness
+        if self.world.repitePosiciones():
+            return -1.0
 
-        # Penalización si no llega a cumplir el objetivo
-        if self.world.ticks_to_finish is None:
-            ticks_term = self.params["max_steps"]
-        else:
-            ticks_term = self.world.ticks_to_finish
+        # penalizacion por tiempo
+        if self.world.ticks_to_finish is not None:  # si termino
+            fit -= self.world.ticks_to_finish / (2 * self.params["max_steps"])
+        else: # si no termino
+            fit -= 1.0
 
-        # Fitness combina rapidez + precisión (distancia baja = mejor)
-        fit = 1.0 / (ticks_term + 1e-6) + 1.0 / (dist**2 + 1e-6)
+        # tasa de ovejas dentro del objetivo
+        fit += self.world.ovejasGuiadasRate()
 
-        # Pequeño castigo si el pastor se sale del área
-        shepherd = self.world.pastores[0]
-        if (
-            shepherd.position[0] < 0
-            or shepherd.position[0] > w_w
-            or shepherd.position[1] < 0
-            or shepherd.position[1] > w_h
-        ):
-            fit *= 0.2  # castigo fuerte si se va fuera
+        # tasa de ticks en que se guiaron ovejas
+        fit += self.world.drivingRate()
 
         return fit

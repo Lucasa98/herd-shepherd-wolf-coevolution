@@ -7,14 +7,25 @@ class Shepherd:
         self.position = np.array(position, dtype=float)
         self.heading = np.array(heading, dtype=float)
         self.model = model
+        self.pastoreando: bool = False
+        self.count_pastoreando: int = 0
+        self.prev_pos = None
+        self.count_pos_repetida = 0
 
     def update(self, sheeps, shepherd, objetivo_c):
+        if self.pastoreando:
+            self.count_pastoreando += 1
+            self.pastoreando = False
+
         self.model.update(self, sheeps, shepherd, objetivo_c)
         margen = 2
         self.position[0] = np.clip(self.position[0], margen, self.model.params["w_w"] - margen)
         self.position[1] = np.clip(self.position[1], margen, self.model.params["w_h"] - margen)
 
-
+        if np.dot(self.prev_pos - self.position, self.prev_pos - self.position) < 0.5:
+            self.count_pos_repetida += 1
+        else:
+            self.count_pos_repetida = 0
 
     def draw(self, surface: pygame.Surface):
         pygame.draw.circle(surface, "green", self.position, 1)
