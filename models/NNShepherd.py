@@ -10,10 +10,18 @@ class NNShepherdModel:
         self.nn = nn_model
 
     def update(self, shepherd, sheeps, shepherds, objetivo_c):
-        # Entradas: ovejas mas cercanas + el objetivo + los dos pastores vecinos mas cercanos
-        # calcular ovejas mas cercanas
+        """
+        Actualiza la posición del pastor según la salida de la red neuronal
+        Entradas normalizadas y relativas al pastor 
+        """
+        #ENTORNO
+        w = float(self.params["w_w"])
+        h = float(self.params["w_h"])
+        max_dim = max(w, h)
+
+        #NEAREST OVEJAS
         ovejas_pos = np.array([])
-        if self.params["pers_ovejas"] > 0:
+        if self.params["pers_ovejas"] > 0 and len(sheeps) > 0:
             diffs = np.array([s.position - shepherd.position for s in sheeps])
             dists = np.sum(diffs**2, axis=1)
             cercanas_idx = np.argpartition(dists, self.params["pers_ovejas"])[
@@ -21,9 +29,9 @@ class NNShepherdModel:
             ]
             ovejas_pos = np.array([sheeps[i].position for i in cercanas_idx])
 
-        # calcular pastores mas cercanos
+        #NEAREST PASTORES
         pastores_pos = np.array([])
-        if self.params["pers_pastores"] > 0:
+        if self.params["pers_pastores"] > 0 and len(shepherds) > 1:
             diffs = np.array(
                 [
                     other.position - shepherd.position
@@ -35,35 +43,51 @@ class NNShepherdModel:
             cercanos_idx = np.argpartition(dists, self.params["pers_pastores"])[
                 : self.params["pers_pastores"]
             ]
-            pastores_pos = np.array([sheeps[i].position for i in cercanos_idx])
+            pastores_pos = np.array([diffs[i] for i in cercanos_idx])
 
-        inputs = np.concatenate(
-            [shepherd.position, pastores_pos.ravel(), ovejas_pos.ravel(), objetivo_c]
+        #INPUTS RELATIVOS AL PASTOR
+        rel_ovejas = (
+            ovejas_pos - shepherd.position if ovejas_pos.size > 0 else np.array([])
         )
-        inputs = torch.tensor(inputs, dtype=torch.float32).unsqueeze(0)
-        out = self.nn(inputs).detach().numpy().squeeze()
+        rel_pastores = (
+            pastores_pos - shepherd.position if pastores_pos.size > 0 else np.array([])
+        )
+        rel_objetivo = objetivo_c - shepherd.position
 
-        # normalize and move
+        # Concatenar: dirección actual + vecinos + ovejas + objetivo relativo
+        inputs = np.concatenate(
+            [shepherd.heading, rel_pastores.ravel(), rel_ovejas.ravel(), rel_objetivo]
+        )
+
+        #NORMALIZAR INPUTS
+        coords = inputs.reshape(-1, 2) if inputs.size % 2 == 0 else None
+        if coords is not None:
+            coords[:, 0] = (coords[:, 0]) / (w / 2)
+            coords[:, 1] = (coords[:, 1]) / (h / 2)
+            inputs_norm = np.clip(coords.ravel(), -1.0, 1.0)
+        else:
+            inputs_norm = np.clip(inputs / (max_dim / 2), -1.0, 1.0)
+
+        #FORWARD PASS
+        inputs_tensor = torch.tensor(inputs_norm, dtype=torch.float32).unsqueeze(0)
+        out = self.nn(inputs_tensor).detach().numpy().squeeze()
+
+        #MOVER PASTOR
         shepherd.heading = out / (np.linalg.norm(out) + 1e-8)
         shepherd.position += self.params["p_delta"] * shepherd.heading
 
 
 class ShepherdNN(nn.Module):
-    # TODO: hacer que no se rompa si le cambias input y output dims
     def __init__(self, input_dim=4, hidden_dim_1=128, hidden_dim_2=64, output_dim=2):
         super().__init__()
-        # Napolitano architecture:
-        # 6 input neurons, 
-        # two hidden layers with 128 and 64 neurons respectively, 
-        # both with ReLU activation, and 25 output neurons with linear activation.
-        # (ademas tiene otra version mas grande con 512, 256
+        # Arquitectura Napolitano
         self.net = nn.Sequential(
             nn.Linear(input_dim, hidden_dim_1),
             nn.ReLU(),
             nn.Linear(hidden_dim_1, hidden_dim_2),
             nn.ReLU(),
             nn.Linear(hidden_dim_2, output_dim),
-            nn.Tanh(),
+            nn.Tanh(),  # salida en [-1, 1]
         )
 
     def forward(self, x):

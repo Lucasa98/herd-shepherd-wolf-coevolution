@@ -82,11 +82,14 @@ class World:
         self.entities.extend(self.ovejas)
 
     def initPastores(self, model):
-        # TODO: agregar la posibilidad de mas pastores
-        start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
-        heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
+        # colocar el pastor cerca del centro inicial de las ovejas
+        cg = np.mean([o.position for o in self.ovejas], axis=0)
+        offset = np.array([5.0, 0.0])  # pequeño desplazamiento
+        start_pos = cg + offset
+        heading = np.array([1.0, 0.0], dtype=float)
         self.pastores = [Shepherd(start_pos, heading, model)]
         self.entities.extend(self.pastores)
+
 
     def initObjetivo(self):
         self.objetivo_c = (
@@ -126,4 +129,4 @@ class World:
 
     def centroGravedadOvejas(self):
         pos = np.array([o.position for o in self.ovejas])
-        return np.mean(pos)
+        return np.mean(pos, axis=0)
