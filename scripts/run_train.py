@@ -59,6 +59,7 @@ def evaluar_poblacion(poblacion, in_q, out_q):
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     # para dar prioridad en windows
     import psutil
+
     p = psutil.Process(os.getpid())
     p.nice(psutil.HIGH_PRIORITY_CLASS)
     # =============================
@@ -154,7 +155,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         "mutacion": params["mutacion"],
         "generaciones": params["generaciones"],
         "best_fitness": float(fit_elite),
-        "tiempo": t_total
+        "tiempo": t_total,
     }
 
     with open(os.path.join(save_dir, f"{timestamp}.json"), "w") as f:

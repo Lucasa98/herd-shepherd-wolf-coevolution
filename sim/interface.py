@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 
+
 class Interface:
     def __init__(self, font_size=16, color=(255, 255, 255)):
         pygame.font.init()
@@ -48,4 +49,6 @@ class Interface:
             y_pos = y_text_end + 10
 
             surface.blit(mini, (x_pos, y_pos))
-            pygame.draw.rect(surface, "white", (x_pos - 2, y_pos - 2, cam_w + 4, cam_h + 4), 2)
+            pygame.draw.rect(
+                surface, "white", (x_pos - 2, y_pos - 2, cam_w + 4, cam_h + 4), 2
+            )

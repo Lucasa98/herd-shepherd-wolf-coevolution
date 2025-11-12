@@ -1,8 +1,8 @@
 import numpy as np
-import torch
-from models.NNShepherd import ShepherdNN, NNShepherdModel
+from models.NNShepherd import NNShepherdModel
 from sim.world import World
 from sim.utils import Utils
+
 
 class Evaluador:
     def __init__(self, params, rng):
@@ -17,7 +17,11 @@ class Evaluador:
         self.world.restart(shepherdModel)
 
         c = 0
-        while c < self.params["max_steps"] and self.world.ticks_to_finish is None and not self.world.repitePosiciones():
+        while (
+            c < self.params["max_steps"]
+            and self.world.ticks_to_finish is None
+            and not self.world.repitePosiciones()
+        ):
             self.world.update()
             c += 1
 
@@ -31,7 +35,7 @@ class Evaluador:
         # penalizacion por tiempo
         if self.world.ticks_to_finish is not None:  # si termino
             fit -= self.world.ticks_to_finish / (2 * self.params["max_steps"])
-        else: # si no termino
+        else:  # si no termino
             fit -= 1.0
 
         # tasa de ovejas dentro del objetivo

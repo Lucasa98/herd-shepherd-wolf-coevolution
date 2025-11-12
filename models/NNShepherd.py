@@ -13,14 +13,14 @@ class NNShepherdModel:
     def update(self, shepherd: Shepherd, sheeps, shepherds, objetivo_c):
         """
         Actualiza la posición del pastor según la salida de la red neuronal
-        Entradas normalizadas y relativas al pastor 
+        Entradas normalizadas y relativas al pastor
         """
-        #ENTORNO
+        # ENTORNO
         w = float(self.params["w_w"])
         h = float(self.params["w_h"])
         max_dim = max(w, h)
 
-        #NEAREST OVEJAS
+        # NEAREST OVEJAS
         ovejas_pos = np.array([])
         if self.params["pers_ovejas"] > 0 and len(sheeps) > 0:
             diffs = np.array([s.position - shepherd.position for s in sheeps])
@@ -30,7 +30,7 @@ class NNShepherdModel:
             ]
             ovejas_pos = np.array([sheeps[i].position for i in cercanas_idx])
 
-        #NEAREST PASTORES
+        # NEAREST PASTORES
         pastores_pos = np.array([])
         if self.params["pers_pastores"] > 0 and len(shepherds) > 1:
             diffs = np.array(
@@ -46,7 +46,7 @@ class NNShepherdModel:
             ]
             pastores_pos = np.array([diffs[i] for i in cercanos_idx])
 
-        #INPUTS RELATIVOS AL PASTOR
+        # INPUTS RELATIVOS AL PASTOR
         rel_ovejas = (
             ovejas_pos - shepherd.position if ovejas_pos.size > 0 else np.array([])
         )
@@ -60,7 +60,7 @@ class NNShepherdModel:
             [shepherd.heading, rel_pastores.ravel(), rel_ovejas.ravel(), rel_objetivo]
         )
 
-        #NORMALIZAR INPUTS
+        # NORMALIZAR INPUTS
         coords = inputs.reshape(-1, 2) if inputs.size % 2 == 0 else None
         if coords is not None:
             coords[:, 0] = (coords[:, 0]) / (w / 2)
@@ -69,11 +69,11 @@ class NNShepherdModel:
         else:
             inputs_norm = np.clip(inputs / (max_dim / 2), -1.0, 1.0)
 
-        #FORWARD PASS
+        # FORWARD PASS
         inputs_tensor = torch.tensor(inputs_norm, dtype=torch.float32).unsqueeze(0)
         out = self.nn(inputs_tensor).detach().numpy().squeeze()
 
-        #MOVER PASTOR
+        # MOVER PASTOR
         shepherd.heading = out / (np.linalg.norm(out) + 1e-8)
         # mover
         shepherd.prev_pos = shepherd.position.copy()

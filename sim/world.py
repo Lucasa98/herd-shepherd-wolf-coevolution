@@ -1,13 +1,11 @@
 import numpy as np
 import pygame
-import torch
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
-from models.NNShepherd import NNShepherdModel, ShepherdNN
+from models.NNShepherd import NNShepherdModel
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 from sim.utils import Utils
-
 
 
 class World:
@@ -51,14 +49,20 @@ class World:
         # solo reubicamos
         N = self.params["N"]
         rand_positions = self.rng.uniform(0, 1, size=(N, 2))
-        rand_positions[:, 0] = rand_positions[:, 0] * self.init_width + self.init_width_offset
-        rand_positions[:, 1] = rand_positions[:, 1] * self.init_height + self.init_height_offset
+        rand_positions[:, 0] = (
+            rand_positions[:, 0] * self.init_width + self.init_width_offset
+        )
+        rand_positions[:, 1] = (
+            rand_positions[:, 1] * self.init_height + self.init_height_offset
+        )
         for i, oveja in enumerate(self.ovejas):
             oveja.position = rand_positions[i]
 
         # ===== Pastor =====
         # solo reubicamos
-        start_pos = np.array([self.width, self.height]) * self.rng.uniform(0, 1, size=(2))
+        start_pos = np.array([self.width, self.height]) * self.rng.uniform(
+            0, 1, size=(2)
+        )
         heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
         for i, pastor in enumerate(self.pastores):
             pastor.count_pastoreando = 0
@@ -77,8 +81,12 @@ class World:
 
         N = self.params["N"]
         rand_positions = self.rng.uniform(0, 1, size=(N, 2))
-        rand_positions[:, 0] = rand_positions[:, 0] * self.init_width + self.init_width_offset
-        rand_positions[:, 1] = rand_positions[:, 1] * self.init_height + self.init_height_offset
+        rand_positions[:, 0] = (
+            rand_positions[:, 0] * self.init_width + self.init_width_offset
+        )
+        rand_positions[:, 1] = (
+            rand_positions[:, 1] * self.init_height + self.init_height_offset
+        )
         self.ovejas = [Sheep(rand_positions[i], [0, 1], model=model) for i in range(N)]
         self.entities.extend(self.ovejas)
 
@@ -90,7 +98,6 @@ class World:
         heading = np.array([1.0, 0.0], dtype=float)
         self.pastores = [Shepherd(start_pos, heading, model)]
         self.entities.extend(self.pastores)
-
 
     def initObjetivo(self):
         self.objetivo_c = (
@@ -158,7 +165,7 @@ class World:
 
     def repitePosiciones(self):
         for p in self.pastores:
-            if p.count_pos_repetida > self.params['max_reps']:
+            if p.count_pos_repetida > self.params["max_reps"]:
                 return True
 
         return False

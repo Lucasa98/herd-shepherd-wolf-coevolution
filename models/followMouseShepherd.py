@@ -17,7 +17,6 @@ class FollowMouseShepherd:
         objetivo_c,
     ):
         p = self.params
-        disp_size = pygame.display.get_surface().get_size()
         mouse_pos = pygame.mouse.get_pos()
 
         # Limitar el mouse al área del mundo (sin incluir la interfaz)

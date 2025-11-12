@@ -18,8 +18,7 @@ class Window:
         self.screen_height = params["w_h"]
 
         self.screen = pygame.display.set_mode(
-            (self.screen_width, self.screen_height),
-            HWSURFACE | DOUBLEBUF | RESIZABLE
+            (self.screen_width, self.screen_height), HWSURFACE | DOUBLEBUF | RESIZABLE
         )
 
         self.world_surface = pygame.Surface((params["w_w"], params["w_h"]))
@@ -52,13 +51,14 @@ class Window:
         available_w = screen_w - self.interface_width
         available_h = screen_h
         scale_factor = min(
-            available_w / self.params["w_w"],
-            available_h / self.params["w_h"]
+            available_w / self.params["w_w"], available_h / self.params["w_h"]
         )
 
         scaled_w = int(self.params["w_w"] * scale_factor)
         scaled_h = int(self.params["w_h"] * scale_factor)
-        scaled_world = pygame.transform.smoothscale(self.world_surface, (scaled_w, scaled_h))
+        scaled_world = pygame.transform.smoothscale(
+            self.world_surface, (scaled_w, scaled_h)
+        )
 
         # limpiar pantalla
         self.screen.fill((0, 0, 0))

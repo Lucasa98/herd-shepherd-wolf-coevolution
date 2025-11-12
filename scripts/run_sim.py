@@ -6,11 +6,13 @@ from sim.window import Window
 with open("config.yaml") as f:
     params = yaml.safe_load(f)
 
-#==== Selección de modelo ==========
+# ==== Selección de modelo ==========
 trained_dir = "models/trained"
-trained_models = sorted(
-    [f for f in os.listdir(trained_dir) if f.endswith(".npy")]
-) if os.path.exists(trained_dir) else []
+trained_models = (
+    sorted([f for f in os.listdir(trained_dir) if f.endswith(".npy")])
+    if os.path.exists(trained_dir)
+    else []
+)
 
 print("Seleccione modelo:")
 print("[0] follow mouse")
