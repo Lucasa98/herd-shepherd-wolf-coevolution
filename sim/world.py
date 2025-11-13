@@ -101,15 +101,18 @@ class World:
         self.entities.extend(self.pastores)
 
     def initObjetivo(self):
-        self.objetivo_c = (
-            np.array(
-                [
-                    self.width - 2 * self.params["obj_r"],
-                    self.height - 2 * self.params["obj_r"],
-                ]
-            )
-            * self.rng.uniform(0, 1, size=(2))
-        ) + self.params["obj_r"]
+        if self.params['obj_x'] != -1 and self.params['obj_y'] != -1:
+            self.objetivo_c = (
+                np.array(
+                    [
+                        self.width - 2 * self.params["obj_r"],
+                        self.height - 2 * self.params["obj_r"],
+                    ]
+                )
+                * self.rng.uniform(0, 1, size=(2))
+            ) + self.params["obj_r"]
+        else:
+            self.objetivo_c = np.array([self.params["obj_x"], self.params["obj_y"]])
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):

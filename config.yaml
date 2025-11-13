@@ -2,8 +2,10 @@
 w_w: 300  # ancho
 w_h: 300  # alto
 obj_r: 25  # radio del objetivo
+obj_x: 50  # coordenadas fijas de objetivo (-1: aleatorio)
+obj_y: 50  # coordenadas fijas de objetivo (-1: aleatorio)
 # OVEJAS
-N: 50  # numero de ovejas
+N: 5  # numero de ovejas
 r_s: 65.0  # radio de repulsion del pastor
 r_a: 2.0  # radio de repulsion de otras ovejas
 h: 0.5  # coeficiente de inercia
@@ -12,7 +14,7 @@ rho_a: 2.0  # fuerza de repulsion (oveja-oveja)
 rho_s: 1.0  # fuerza de repulsion (pastor-oveja)
 e: 0.3  # ruido angular (componente estocastica)
 delta: 1.0  # distancia por paso
-n_neigh: 7  # numero de vecinos para cohesion
+n_neigh: 4  # numero de vecinos para cohesion
 r_walk: 0.05  # probabilidad de random walk
 # PASTOR
 p_delta: 1.5  # distancia por paso
@@ -26,8 +28,8 @@ hidden_lay_2: 4  # neuronas de la segunda capa oculta
 # ENTRENAMIENTO
 max_steps_ini: 200  # numero maximo de pasos por simulacion (inicial)
 max_steps: 2000  # numero maximo de pasos por simulacion (final)
-poblacion: 1000  # individuos por poblacion
-generaciones: 4000  # generaciones
-progenitores: 100  # progenitores por generacion
+poblacion: 100  # individuos por poblacion
+generaciones: 400  # generaciones
+progenitores: 10  # progenitores por generacion
 mutacion: 0.05  # probabilidad de mutacion
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping
