@@ -25,7 +25,7 @@ class NNShepherdModel:
         if self.params["pers_ovejas"] > 0 and len(sheeps) > 0:
             diffs = np.array([s.position - shepherd.position for s in sheeps])
             dists = np.sum(diffs**2, axis=1)
-            cercanas_idx = np.argpartition(dists, self.params["pers_ovejas"])[
+            cercanas_idx = np.argpartition(dists, self.params["pers_ovejas"]-1)[
                 : self.params["pers_ovejas"]
             ]
             ovejas_pos = np.array([sheeps[i].position for i in cercanas_idx])
@@ -41,7 +41,7 @@ class NNShepherdModel:
                 ]
             )
             dists = np.sum(diffs**2, axis=1)
-            cercanos_idx = np.argpartition(dists, self.params["pers_pastores"])[
+            cercanos_idx = np.argpartition(dists, self.params["pers_pastores"]-1)[
                 : self.params["pers_pastores"]
             ]
             pastores_pos = np.array([diffs[i] for i in cercanos_idx])
