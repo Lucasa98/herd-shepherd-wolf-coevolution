@@ -43,8 +43,8 @@ class Evaluador:
             detail["ticks_to_finish"] = -1.0
 
         # tasa de ovejas dentro del objetivo
-        detail["ovejas_guiadas_rate"] = self.world.ovejasGuiadasRate()
-        fit += detail["ovejas_guiadas_rate"]
+        detail["ovejas_dentro_rate"] = self.world.ovejasDentroRate()
+        fit += detail["ovejas_dentro_rate"]
 
         # tasa de ticks en que se guiaron ovejas
         detail["driving_rate"] = self.world.drivingRate()

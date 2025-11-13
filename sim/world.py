@@ -144,7 +144,7 @@ class World:
         pos = np.array([o.position for o in self.ovejas])
         return np.mean(pos, axis=0)
 
-    def ovejasGuiadasRate(self):
+    def ovejasDentroRate(self):
         """La tasa de ovejas dentro del objetivo. 1 -> todas las ovejas dentro de l objetivo"""
         r_2 = self.objetivo_r * self.objetivo_r
         # A la primera que encuentra afuera, retorna falso
