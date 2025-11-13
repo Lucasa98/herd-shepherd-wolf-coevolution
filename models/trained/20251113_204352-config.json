@@ -21,8 +21,8 @@
   "max_w": 16,
   "pers_ovejas": 5,
   "pers_pastores": 0,
-  "hidden_lay_1": 16,
-  "hidden_lay_2": 8,
+  "hidden_lay_1": 128,
+  "hidden_lay_2": 64,
   "max_steps_ini": 200,
   "max_steps": 1000,
   "poblacion": 1000,
@@ -31,5 +31,5 @@
   "mutacion": 0.05,
   "max_reps": 9,
   "n_inputs": 14,
-  "n_bits": 3152
+  "n_bits": 82448
 }

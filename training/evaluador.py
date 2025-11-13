@@ -26,24 +26,31 @@ class Evaluador:
             c += 1
 
         # ===== FITNESS =====
-        fit = 2.0
+        fit = 0.0
+        detail = {}
 
         # si se quedo trabado, early-stopping y mal fitness
         if self.world.repitePosiciones():
-            return -1.0
+            return -1.0, {"repitePosiciones": -1.0}
 
         # penalizacion por tiempo
         if self.world.ticks_to_finish is not None:  # si termino
-            fit -= self.world.ticks_to_finish / (2.0 * N_steps)
+            f = self.world.ticks_to_finish / (2.0 * N_steps)
+            fit -= f
+            detail["ticks_to_finish"] = -f
         else:  # si no termino
             fit -= 1.0
+            detail["ticks_to_finish"] = -1.0
 
         # tasa de ovejas dentro del objetivo
-        fit += self.world.ovejasGuiadasRate()
+        detail["ovejas_guiadas_rate"] = self.world.ovejasGuiadasRate()
+        fit += detail["ovejas_guiadas_rate"]
 
         # tasa de ticks en que se guiaron ovejas
-        fit += self.world.drivingRate()
+        detail["driving_rate"] = self.world.drivingRate()
+        fit += detail["driving_rate"]
 
-        fit += 1.0 / self.world.distanciaPromedio()
+        detail["distancia_promedio"] = 1.0 / self.world.distanciaPromedio()
+        fit += detail["distancia_promedio"]
 
-        return fit
+        return fit, detail

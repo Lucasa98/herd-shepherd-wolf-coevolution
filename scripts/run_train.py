@@ -15,17 +15,20 @@ def worker_loop(in_q: mp.Queue, out_q: mp.Queue, params):
     local_rng: np.random.Generator = np.random.default_rng()
     ev = Evaluador(params, local_rng)
     for i, (genome, N_ticks) in iter(in_q.get, None):
-        out_q.put((i, ev.evaluar(genome, N_ticks)))
+        f, d = ev.evaluar(genome, N_ticks)
+        out_q.put((i, f, d))
 
 
 def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
     fit = [0 for _ in range(len(poblacion))]
+    det = [0 for _ in range(len(poblacion))]
     for i, gen in enumerate(poblacion):
         in_q.put((i, (gen, N_ticks)))
     for _ in range(len(poblacion)):
-        i, f = out_q.get()
+        i, f, d = out_q.get()
         fit[i] = f
-    return fit
+        det[i] = d
+    return fit, det
 
 
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
@@ -83,11 +86,16 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     steps_rate = (params["max_steps"] - params["max_steps_ini"]) / params[
         "generaciones"
     ]  # ratio de aumento del numero ticks
-    fit = evaluar_poblacion(poblacion, N_steps, in_q, out_q)
+    fit, fit_detail = evaluar_poblacion(poblacion, N_steps, in_q, out_q)
     sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
 
     fit_elite = fit[sorted[-1]]
     fit_history = np.vstack([fit_history, [0, fit_elite]])
+    logger.info(
+        "primer fitness: %.2f, %s",
+        fit_elite,
+        {k: f"{v:.2f}" for k, v in fit_detail[sorted[-1]].items()},
+    )
 
     logger.info("iniciando evolucion")
     t_ini = time.perf_counter()
@@ -129,11 +137,15 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         # ovejas y ticks para esta generacion
         N_steps += steps_rate
         # 3) evaluar fitness
-        fit = evaluar_poblacion(poblacion, int(np.floor(N_steps)), in_q, out_q)
+        fit, fit_detail = evaluar_poblacion(
+            poblacion, int(np.floor(N_steps)), in_q, out_q
+        )
         sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
         if fit[sorted[-1]] > fit_elite:
             logger.info(
-                f"generacion {g+1} - fitness superado: {fit_elite} -> {fit[sorted[-1]]}"
+                f"generacion {g+1} - fitness superado: %.2f, %s",
+                fit[sorted[-1]],
+                {k: f"{v:.2f}" for k, v in fit_detail[sorted[-1]].items()},
             )
             fit_elite = fit[sorted[-1]]
             fit_history = np.vstack([fit_history, [g + 1, fit_elite]])

@@ -40,7 +40,6 @@ class World:
         self.initObjetivo()
 
     def restart(self, shepherdModel):
-        # TODO: optimizar
         self.ticks = 0
         self.ticks_to_finish = None
         self.entities = []
