@@ -90,7 +90,6 @@ class ShepherdNN(nn.Module):
             nn.Linear(hidden_dim_1, hidden_dim_2),
             nn.ReLU(),
             nn.Linear(hidden_dim_2, output_dim),
-            nn.Tanh(),  # salida en [-1, 1]
         )
 
     def forward(self, x):

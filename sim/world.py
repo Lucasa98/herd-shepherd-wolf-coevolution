@@ -68,6 +68,7 @@ class World:
             pastor.count_pastoreando = 0
             pastor.position = start_pos
             pastor.heading = heading
+            pastor.model = shepherdModel
 
         # Objetivo
         self.initObjetivo()

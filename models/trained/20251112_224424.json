@@ -1,0 +1,13 @@
+{
+  "n_inputs": 14,
+  "hidden_lay_1": 8,
+  "hidden_lay_2": 4,
+  "min_w": -15,
+  "max_w": 16,
+  "poblacion": 100,
+  "progenitores": 10,
+  "mutacion": 0.1,
+  "generaciones": 500,
+  "best_fitness": 1.2,
+  "tiempo": 10.452114277999499
+}
