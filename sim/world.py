@@ -5,7 +5,7 @@ from models.followMouseShepherd import FollowMouseShepherd
 from models.NNShepherd import NNShepherdModel
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
-from sim.utils import Utils
+from training.utils import Utils
 
 
 class World:
@@ -173,3 +173,12 @@ class World:
                 return True
 
         return False
+
+    def distanciaPromedio(self):
+        """Distancia promedio de las ovejas al objetivo"""
+        dists2 = 0  # sumatoria de las distancias al cuadrado (para no hacer la raiz que es cara)
+        for o in self.ovejas:
+            diff = self.objetivo_c - o.position
+            dists2 += np.dot(diff, diff)
+
+        return dists2 / len(self.ovejas)

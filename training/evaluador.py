@@ -1,7 +1,7 @@
 import numpy as np
 from models.NNShepherd import NNShepherdModel
 from sim.world import World
-from sim.utils import Utils
+from training.utils import Utils
 
 
 class Evaluador:
@@ -34,7 +34,7 @@ class Evaluador:
 
         # penalizacion por tiempo
         if self.world.ticks_to_finish is not None:  # si termino
-            fit -= self.world.ticks_to_finish / (2 * N_steps)
+            fit -= self.world.ticks_to_finish / (2.0 * N_steps)
         else:  # si no termino
             fit -= 1.0
 
@@ -43,5 +43,7 @@ class Evaluador:
 
         # tasa de ticks en que se guiaron ovejas
         fit += self.world.drivingRate()
+
+        fit += 1.0 / self.world.distanciaPromedio()
 
         return fit
