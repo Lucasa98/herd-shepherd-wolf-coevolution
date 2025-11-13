@@ -23,13 +23,13 @@ min_w: -15  # valor minimo de peso
 max_w: 16  # valor maximo de peso
 pers_ovejas: 5  # ovejas percibidas por el pastor
 pers_pastores: 0  # otros pastores percibidos por el pastor
-hidden_lay_1: 8  # neuronas de la primer capa oculta
-hidden_lay_2: 4  # neuronas de la segunda capa oculta
+hidden_lay_1: 128  # neuronas de la primer capa oculta
+hidden_lay_2: 64  # neuronas de la segunda capa oculta
 # ENTRENAMIENTO
 max_steps_ini: 200  # numero maximo de pasos por simulacion (inicial)
-max_steps: 2000  # numero maximo de pasos por simulacion (final)
-poblacion: 100  # individuos por poblacion
-generaciones: 400  # generaciones
+max_steps: 1000  # numero maximo de pasos por simulacion (final)
+poblacion: 1000  # individuos por poblacion
+generaciones: 1000  # generaciones
 progenitores: 10  # progenitores por generacion
 mutacion: 0.05  # probabilidad de mutacion
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping

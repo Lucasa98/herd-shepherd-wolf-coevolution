@@ -27,7 +27,7 @@ else:  # seleccionar modelo de la carpeta models/trained
     params["model"] = "NN"
     base_name = trained_models[choice - 1]
     modelo_path = os.path.join(trained_dir, base_name)
-    json_path = modelo_path.replace(".npy", ".json")
+    json_path = modelo_path.replace("model.npy", "config.json")
     with open(json_path) as f:
         saved_params = json.load(f)
     params.update(saved_params)

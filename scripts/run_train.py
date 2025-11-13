@@ -9,44 +9,12 @@ from tqdm import tqdm
 from training.evaluador import Evaluador
 from datetime import datetime
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename=f"./models/trained/{datetime.now().strftime("%Y%m%d_%H%M%S")}.log", level=logging.INFO)
-
-with open("config.yaml") as f:
-    logger.info('cargando config.yaml ...')
-    params = yaml.safe_load(f)
-    logger.info('config.yaml cargado ...')
-
-ventana = params["poblacion"] // params["progenitores"]
-params["n_inputs"] = (
-    2 * params["pers_ovejas"]  # ovejas
-    + 2 * params["pers_pastores"]  # otros pastores
-    + 4  # el objetivo y su propia posicion
-)
-params["n_bits"] = 8 * (
-    (
-        params["n_inputs"] * params["hidden_lay_1"]
-        + params[
-            "hidden_lay_1"
-        ]  # capa oculta 1: por cada neurona, un peso por input y un bias
-    )
-    + (
-        params["hidden_lay_1"] * params["hidden_lay_2"]
-        + params["hidden_lay_2"]  # capa oculta 2
-    )
-    + (params["hidden_lay_2"] * 2 + 2)  # capa de salida: 2 neuronas de salida, FIJO
-)
-
-rng: np.random.Generator = np.random.default_rng()
-
-
 # inicializador de cada hilo
 def worker_loop(in_q: mp.Queue, out_q: mp.Queue, params):
     local_rng: np.random.Generator = np.random.default_rng()
     ev = Evaluador(params, local_rng)
     for i, (genome, N_ticks) in iter(in_q.get, None):
         out_q.put((i, ev.evaluar(genome, N_ticks)))
-
 
 def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
     fit = [0 for _ in range(len(poblacion))]
@@ -57,12 +25,36 @@ def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
         fit[i] = f
     return fit
 
-
-# ====================================
-
-# ======================= EVOLUCION =======================
-
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(filename=f"./models/trained/{timestamp}.log", level=logging.INFO)
+
+    with open("config.yaml") as f:
+        logger.info('cargando config.yaml ...')
+        params = yaml.safe_load(f)
+        logger.info('config.yaml cargado ...')
+
+    ventana = params["poblacion"] // params["progenitores"]
+    params["n_inputs"] = (
+        2 * params["pers_ovejas"]  # ovejas
+        + 2 * params["pers_pastores"]  # otros pastores
+        + 4  # el objetivo y su propia posicion
+    )
+    # capas ocultas: por cada neurona, un peso por input y un bias
+    # capa de salida: 2 neuronas de salida, FIJO
+    params["n_bits"] = 8 * (
+        (
+            params["n_inputs"] * params["hidden_lay_1"] + params["hidden_lay_1"]
+        )
+        + (
+            params["hidden_lay_1"] * params["hidden_lay_2"] + params["hidden_lay_2"]
+        )
+        + (params["hidden_lay_2"] * 2 + 2)
+    )
+
+    rng: np.random.Generator = np.random.default_rng()
+
     logger.info('iniciando workers ...')
     N_WORKERS = 6  # OJO!
     # Arrancar workers
@@ -74,6 +66,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     for w in workers:
         w.start()
     logger.info('workers inicializados ...')
+
+    # ======================= EVOLUCION =======================
 
     logger.info('inicializando poblacion ...')
     # 1) inicializar la poblacion al azar
@@ -121,13 +115,13 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
             poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
 
-            # mutar a nivel de gen
-            N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
-            if N_mut > 0:
-                # Tomar indices aleatorios y flipear esos bits
-                idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
-                flat = poblacion.reshape(-1)
-                flat[idx] ^= 1
+        # mutar a nivel de gen
+        N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
+        if N_mut > 0:
+            # Tomar indices aleatorios y flipear esos bits
+            idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
+            flat = poblacion.reshape(-1)
+            flat[idx] ^= 1
 
         # ovejas y ticks para esta generacion
         N_steps += steps_rate
@@ -155,29 +149,14 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     logger.info(f"guardando modelo de mejor individuo")
     best_genome = poblacion[sorted[-1]]
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir = "models/trained"
     os.makedirs(save_dir, exist_ok=True)
 
-    np.save(os.path.join(save_dir, f"{timestamp}.npy"), best_genome)
+    np.save(os.path.join(save_dir, f"{timestamp}-model.npy"), best_genome)
 
-    model_info = {
-        "n_inputs": params["n_inputs"],
-        "hidden_lay_1": params["hidden_lay_1"],
-        "hidden_lay_2": params["hidden_lay_2"],
-        "min_w": params["min_w"],
-        "max_w": params["max_w"],
-        "poblacion": params["poblacion"],
-        "progenitores": params["progenitores"],
-        "mutacion": params["mutacion"],
-        "generaciones": params["generaciones"],
-        "best_fitness": float(fit_elite),
-        "tiempo": t_total,
-    }
+    with open(os.path.join(save_dir, f"{timestamp}-config.json"), "w") as f:
+        json.dump(params, f, indent=2)
 
-    with open(os.path.join(save_dir, f"{timestamp}.json"), "w") as f:
-        json.dump(model_info, f, indent=2)
-
-    logger.info(f"guardado modelo {timestamp}.json")
+    logger.info(f"guardado modelo {timestamp}.npy")
 
     logger.info(f"Programa finalizado en {t_total/60.0} minutos")
