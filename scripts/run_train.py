@@ -121,10 +121,13 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
             poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
 
-            # mutar
-            if rng.random() < params["mutacion"]:
-                b = rng.integers(0, params["n_bits"])
-                poblacion[i, b] ^= 1  # invierte 0 a 1 y viceversa
+            # mutar a nivel de gen
+            N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
+            if N_mut > 0:
+                # Tomar indices aleatorios y flipear esos bits
+                idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
+                flat = poblacion.reshape(-1)
+                flat[idx] ^= 1
 
         # ovejas y ticks para esta generacion
         N_steps += steps_rate
