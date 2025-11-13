@@ -10,7 +10,7 @@ class Evaluador:
         self.params = params
         self.world: World = World(params["w_w"], params["w_h"], params, rng)
 
-    def evaluar(self, gen: np.ndarray[np.uint8]) -> float:
+    def evaluar(self, gen: np.ndarray[np.uint8], N_steps: int) -> float:
         nn_model = Utils.genome_to_model(gen, self.params)
         shepherdModel = NNShepherdModel(self.params, self.rng, nn_model)
 
@@ -18,7 +18,7 @@ class Evaluador:
 
         c = 0
         while (
-            c < self.params["max_steps"]
+            c < N_steps
             and self.world.ticks_to_finish is None
             and not self.world.repitePosiciones()
         ):
@@ -34,7 +34,7 @@ class Evaluador:
 
         # penalizacion por tiempo
         if self.world.ticks_to_finish is not None:  # si termino
-            fit -= self.world.ticks_to_finish / (2 * self.params["max_steps"])
+            fit -= self.world.ticks_to_finish / (2 * N_steps)
         else:  # si no termino
             fit -= 1.0
 

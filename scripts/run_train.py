@@ -44,14 +44,14 @@ rng: np.random.Generator = np.random.default_rng()
 def worker_loop(in_q: mp.Queue, out_q: mp.Queue, params):
     local_rng: np.random.Generator = np.random.default_rng()
     ev = Evaluador(params, local_rng)
-    for i, genome in iter(in_q.get, None):
-        out_q.put((i, ev.evaluar(genome)))
+    for i, (genome, N_ticks) in iter(in_q.get, None):
+        out_q.put((i, ev.evaluar(genome, N_ticks)))
 
 
-def evaluar_poblacion(poblacion, in_q, out_q):
+def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
     fit = [0 for _ in range(len(poblacion))]
     for i, gen in enumerate(poblacion):
-        in_q.put((i, gen))
+        in_q.put((i, (gen, N_ticks)))
     for _ in range(len(poblacion)):
         i, f = out_q.get()
         fit[i] = f
@@ -84,11 +84,14 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     logger.info('poblacion inicializada ...')
 
     # 2) calcular fitness
-    fit = evaluar_poblacion(poblacion, in_q, out_q)
+    N_steps = params['max_steps_ini']
+    steps_rate = (params['max_steps'] - params['max_steps_ini'])/params['generaciones'] # ratio de aumento del numero ticks
+    fit = evaluar_poblacion(poblacion, N_steps, in_q, out_q)
     sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
 
     fit_elite = fit[sorted[-1]]
     fit_history = np.vstack([fit_history, [0, fit_elite]])
+
     logger.info('iniciando evolucion')
     t_ini = time.perf_counter()
     for g in tqdm(range(params["generaciones"])):
@@ -123,8 +126,10 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
                 b = rng.integers(0, params["n_bits"])
                 poblacion[i, b] ^= 1  # invierte 0 a 1 y viceversa
 
+        # ovejas y ticks para esta generacion
+        N_steps += steps_rate
         # 3) evaluar fitness
-        fit = evaluar_poblacion(poblacion, in_q, out_q)
+        fit = evaluar_poblacion(poblacion, int(np.floor(N_steps)), in_q, out_q)
         sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
         if fit[sorted[-1]] > fit_elite:
             logger.info(f"generacion {g+1} - fitness superado: {fit_elite} -> {fit[sorted[-1]]}")
