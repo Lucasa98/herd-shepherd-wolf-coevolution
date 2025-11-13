@@ -1,4 +1,5 @@
 import multiprocessing as mp
+import logging
 import yaml
 import os
 import time
@@ -8,8 +9,13 @@ from tqdm import tqdm
 from training.evaluador import Evaluador
 from datetime import datetime
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename=f"./models/trained/{datetime.now().strftime("%Y%m%d_%H%M%S")}.log", level=logging.INFO)
+
 with open("config.yaml") as f:
+    logger.info('cargando config.yaml ...')
     params = yaml.safe_load(f)
+    logger.info('config.yaml cargado ...')
 
 ventana = params["poblacion"] // params["progenitores"]
 params["n_inputs"] = (
@@ -57,13 +63,8 @@ def evaluar_poblacion(poblacion, in_q, out_q):
 # ======================= EVOLUCION =======================
 
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
-    # para dar prioridad en windows
-    import psutil
-
-    p = psutil.Process(os.getpid())
-    p.nice(psutil.HIGH_PRIORITY_CLASS)
-    # =============================
-    N_WORKERS = 7  # OJO!
+    logger.info('iniciando workers ...')
+    N_WORKERS = 6  # OJO!
     # Arrancar workers
     in_q, out_q = mp.Queue(), mp.Queue()
     workers: list[mp.Process] = [
@@ -72,12 +73,15 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     ]
     for w in workers:
         w.start()
+    logger.info('workers inicializados ...')
 
+    logger.info('inicializando poblacion ...')
     # 1) inicializar la poblacion al azar
     poblacion = rng.integers(
         0, 2, (params["poblacion"], params["n_bits"]), dtype=np.uint8
     )
     fit_history = np.empty((0, 2), dtype=float)
+    logger.info('poblacion inicializada ...')
 
     # 2) calcular fitness
     fit = evaluar_poblacion(poblacion, in_q, out_q)
@@ -85,6 +89,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     fit_elite = fit[sorted[-1]]
     fit_history = np.vstack([fit_history, [0, fit_elite]])
+    logger.info('iniciando evolucion')
     t_ini = time.perf_counter()
     for g in tqdm(range(params["generaciones"])):
         # 1) elegir progenitores: un elite y el resto por ventana
@@ -122,11 +127,14 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         fit = evaluar_poblacion(poblacion, in_q, out_q)
         sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
         if fit[sorted[-1]] > fit_elite:
+            logger.info(f"generacion {g+1} - fitness superado: {fit_elite} -> {fit[sorted[-1]]}")
             fit_elite = fit[sorted[-1]]
             fit_history = np.vstack([fit_history, [g + 1, fit_elite]])
 
     t_total = time.perf_counter() - t_ini
+    logger.info(f"evolucion terminada exitosamente")
 
+    logger.info(f"deteniendo workers")
     # Detener workers
     for _ in range(N_WORKERS):
         in_q.put(None)
@@ -137,6 +145,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     print("fit history:")
     print(fit_history)
 
+    logger.info(f"guardando modelo de mejor individuo")
     best_genome = poblacion[sorted[-1]]
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir = "models/trained"
@@ -160,3 +169,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     with open(os.path.join(save_dir, f"{timestamp}.json"), "w") as f:
         json.dump(model_info, f, indent=2)
+
+    logger.info(f"guardado modelo {timestamp}.json")
+
+    logger.info(f"Programa finalizado en {t_total/60.0} minutos")

@@ -4,10 +4,10 @@
   "hidden_lay_2": 4,
   "min_w": -15,
   "max_w": 16,
-  "poblacion": 1000,
-  "progenitores": 100,
+  "poblacion": 100,
+  "progenitores": 20,
   "mutacion": 0.1,
-  "generaciones": 1000,
+  "generaciones": 500,
   "best_fitness": 1.22,
-  "tiempo": 587.2567634000006
+  "tiempo": 29.008975624001323
 }
