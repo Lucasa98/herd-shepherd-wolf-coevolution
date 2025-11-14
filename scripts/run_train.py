@@ -92,9 +92,9 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     fit_elite = fit[sorted[-1]]
     fit_history = np.vstack([fit_history, [0, fit_elite]])
     logger.info(
-        "primer fitness: %.2f, %s",
+        "primer fitness: %.5f, %s",
         fit_elite,
-        {k: f"{v:.2f}" for k, v in fit_detail[sorted[-1]].items()},
+        {k: f"{v:.5f}" for k, v in fit_detail[sorted[-1]].items()},
     )
 
     logger.info("iniciando evolucion")
@@ -143,9 +143,9 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
         if fit[sorted[-1]] > fit_elite:
             logger.info(
-                f"generacion {g+1} - fitness superado: %.2f, %s",
+                f"generacion {g+1} - fitness superado: %.5f, %s",
                 fit[sorted[-1]],
-                {k: f"{v:.2f}" for k, v in fit_detail[sorted[-1]].items()},
+                {k: f"{v:.5f}" for k, v in fit_detail[sorted[-1]].items()},
             )
             fit_elite = fit[sorted[-1]]
             fit_history = np.vstack([fit_history, [g + 1, fit_elite]])

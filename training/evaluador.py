@@ -26,10 +26,12 @@ class Evaluador:
             c += 1
 
         # ===== FITNESS =====
-        a = 1.0 # ticks_to_finish
-        b = 0.5 # ovejas_dentro_rate
-        c = 1.0 # driving_rate
-        d = 2.0 # distancia_promedio
+        # coeficientes
+        a = 1.0  # ticks_to_finish
+        b = 0.1  # ovejas_dentro_rate
+        c = 10.0  # driving_rate
+        d = 0.5  # distancia_promedio
+
         fit = 0.0
         detail = {}
 
@@ -39,10 +41,10 @@ class Evaluador:
 
         # penalizacion por tiempo
         if self.world.ticks_to_finish is not None:  # si termino
-            detail["ticks_to_finish"] = - a * self.world.ticks_to_finish / (N_steps)
+            detail["ticks_to_finish"] = -a * self.world.ticks_to_finish / (N_steps)
             fit += detail["ticks_to_finish"]
         else:  # si no termino
-            detail["ticks_to_finish"] = - a * 1.0
+            detail["ticks_to_finish"] = -a * 1.0
             fit += detail["ticks_to_finish"]
 
         # tasa de ovejas dentro del objetivo
