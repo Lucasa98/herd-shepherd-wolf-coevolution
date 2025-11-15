@@ -23,51 +23,45 @@ class NNShepherdModel:
         # NEAREST OVEJAS
         ovejas_pos = np.array([])
         if self.params["pers_ovejas"] > 0 and len(sheeps) > 0:
-            diffs = np.array([s.position - shepherd.position for s in sheeps])
-            dists = np.sum(diffs**2, axis=1)
+            relative_to_sheeps = np.array([s.position - shepherd.position for s in sheeps])
+            dists = np.sum(relative_to_sheeps**2, axis=1)
             cercanas_idx = np.argpartition(dists, self.params["pers_ovejas"] - 1)[
                 : self.params["pers_ovejas"]
             ]
-            ovejas_pos = np.array([sheeps[i].position for i in cercanas_idx])
+            ovejas_pos = np.array([relative_to_sheeps[i] for i in cercanas_idx])
 
         # NEAREST PASTORES
         pastores_pos = np.array([])
         if self.params["pers_pastores"] > 0 and len(shepherds) > 1:
-            diffs = np.array(
+            relative_to_shepherds = np.array(
                 [
                     other.position - shepherd.position
                     for other in shepherds
                     if other is not shepherd
                 ]
             )
-            dists = np.sum(diffs**2, axis=1)
+            dists = np.sum(relative_to_shepherds**2, axis=1)
             cercanos_idx = np.argpartition(dists, self.params["pers_pastores"] - 1)[
                 : self.params["pers_pastores"]
             ]
-            pastores_pos = np.array([diffs[i] for i in cercanos_idx])
+            pastores_pos = np.array([relative_to_shepherds[i] for i in cercanos_idx])
 
-        # INPUTS RELATIVOS AL PASTOR
-        rel_ovejas = (
-            ovejas_pos - shepherd.position if ovejas_pos.size > 0 else np.array([])
-        )
-        rel_pastores = (
-            pastores_pos - shepherd.position if pastores_pos.size > 0 else np.array([])
-        )
+        # OBJETIVO
         rel_objetivo = objetivo_c - shepherd.position
 
-        # Concatenar: dirección actual + vecinos + ovejas + objetivo relativo
+        # Concatenar: dirección actual + pos rel a vecinos + por rel a ovejas + pos rel a objetivo
         inputs = np.concatenate(
-            [shepherd.heading, rel_pastores.ravel(), rel_ovejas.ravel(), rel_objetivo]
+            [shepherd.heading, pastores_pos.ravel(), ovejas_pos.ravel(), rel_objetivo]
         )
 
         # NORMALIZAR INPUTS
         coords = inputs.reshape(-1, 2) if inputs.size % 2 == 0 else None
         if coords is not None:
-            coords[:, 0] = (coords[:, 0]) / (w / 2)
-            coords[:, 1] = (coords[:, 1]) / (h / 2)
+            coords[:, 0] = coords[:, 0] / w
+            coords[:, 1] = coords[:, 1] / h
             inputs_norm = np.clip(coords.ravel(), -1.0, 1.0)
         else:
-            inputs_norm = np.clip(inputs / (max_dim / 2), -1.0, 1.0)
+            inputs_norm = np.clip(inputs / max_dim, -1.0, 1.0)
 
         # FORWARD PASS
         inputs_tensor = torch.tensor(inputs_norm, dtype=torch.float32).unsqueeze(0)

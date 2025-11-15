@@ -5,7 +5,7 @@ obj_r: 25  # radio del objetivo
 obj_x: 50  # coordenadas fijas de objetivo (-1: aleatorio)
 obj_y: 50  # coordenadas fijas de objetivo (-1: aleatorio)
 # OVEJAS
-N: 5  # numero de ovejas
+N: 10  # numero de ovejas
 r_s: 65.0  # radio de repulsion del pastor
 r_a: 2.0  # radio de repulsion de otras ovejas
 h: 0.5  # coeficiente de inercia
@@ -27,9 +27,9 @@ hidden_lay_1: 128  # neuronas de la primer capa oculta
 hidden_lay_2: 64  # neuronas de la segunda capa oculta
 # ENTRENAMIENTO
 max_steps_ini: 200  # numero maximo de pasos por simulacion (inicial)
-max_steps: 1000  # numero maximo de pasos por simulacion (final)
+max_steps: 500  # numero maximo de pasos por simulacion (final)
 poblacion: 1000  # individuos por poblacion
-generaciones: 500  # generaciones
-progenitores: 10  # progenitores por generacion
-mutacion: 0.05  # probabilidad de mutacion
+generaciones: 50000  # generaciones
+progenitores: 500  # progenitores por generacion
+mutacion: 0.10  # probabilidad de mutacion
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping

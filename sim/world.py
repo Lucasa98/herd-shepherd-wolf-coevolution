@@ -100,7 +100,7 @@ class World:
         self.entities.extend(self.pastores)
 
     def initObjetivo(self):
-        if self.params["obj_x"] != -1 and self.params["obj_y"] != -1:
+        if self.params["obj_x"] == -1 and self.params["obj_y"] == -1:
             self.objetivo_c = (
                 np.array(
                     [

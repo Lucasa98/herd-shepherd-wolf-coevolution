@@ -28,8 +28,8 @@ class Evaluador:
         # ===== FITNESS =====
         # coeficientes
         a = 1.0  # ticks_to_finish
-        b = 0.1  # ovejas_dentro_rate
-        c = 10.0  # driving_rate
+        b = 0.2  # ovejas_dentro_rate
+        c = 100.0  # driving_rate
         d = 0.5  # distancia_promedio
 
         fit = 0.0
@@ -39,22 +39,23 @@ class Evaluador:
         if self.world.repitePosiciones():
             return -1.0, {"repite_posiciones": -1.0}
 
-        # penalizacion por tiempo
+        # penalizacion por tiempo [0, a]
         if self.world.ticks_to_finish is not None:  # si termino
-            detail["ticks_to_finish"] = -a * self.world.ticks_to_finish / (N_steps)
+            detail["ticks_to_finish"] = a * N_steps / self.world.ticks_to_finish
             fit += detail["ticks_to_finish"]
         else:  # si no termino
-            detail["ticks_to_finish"] = -a * 1.0
+            detail["ticks_to_finish"] = 0
             fit += detail["ticks_to_finish"]
 
-        # tasa de ovejas dentro del objetivo
+        # tasa de ovejas dentro del objetivo [0, b]
         detail["ovejas_dentro_rate"] = b * self.world.ovejasDentroRate()
         fit += detail["ovejas_dentro_rate"]
 
-        # tasa de ticks en que se guiaron ovejas
+        # tasa de ticks en que se guiaron ovejas [0, c]
         detail["driving_rate"] = c * self.world.drivingRate()
         fit += detail["driving_rate"]
 
+        # distancia promedio de ovejas al objetivo [0, d]
         detail["distancia_promedio"] = d * 1.0 / self.world.distanciaPromedio()
         fit += detail["distancia_promedio"]
 

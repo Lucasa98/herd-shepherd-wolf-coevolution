@@ -1,0 +1,24 @@
+INFO:__main__:cargando config.yaml ...
+INFO:__main__:config.yaml cargado ...
+INFO:__main__:iniciando workers ...
+INFO:__main__:workers inicializados ...
+INFO:__main__:inicializando poblacion ...
+INFO:__main__:poblacion inicializada ...
+INFO:__main__:primer fitness: -0.93991, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.06000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00009'}
+INFO:__main__:iniciando evolucion
+INFO:__main__:generacion 1 - fitness superado: -0.91996, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.08000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00004'}
+INFO:__main__:generacion 6 - fitness superado: -0.91986, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.08000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00014'}
+INFO:__main__:generacion 16 - fitness superado: -0.89990, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.10000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00010'}
+INFO:__main__:generacion 19 - fitness superado: -0.89989, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.10000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00011'}
+INFO:__main__:generacion 49 - fitness superado: -0.89982, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.10000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00018'}
+INFO:__main__:generacion 651 - fitness superado: -0.87982, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.12000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00018'}
+INFO:__main__:generacion 5371 - fitness superado: -0.87980, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.12000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00020'}
+INFO:__main__:generacion 14741 - fitness superado: -0.87975, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.12000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00025'}
+INFO:__main__:generacion 33151 - fitness superado: -0.87972, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.12000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00028'}
+INFO:__main__:generacion 62556 - fitness superado: -0.87972, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.12000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00028'}
+INFO:__main__:generacion 90249 - fitness superado: -0.85992, {'ticks_to_finish': '-1.00000', 'ovejas_dentro_rate': '0.14000', 'driving_rate': '0.00000', 'distancia_promedio': '0.00008'}
+INFO:__main__:evolucion terminada exitosamente
+INFO:__main__:deteniendo workers
+INFO:__main__:guardando modelo de mejor individuo
+INFO:__main__:guardado modelo 20251114_063149.npy
+INFO:__main__:Programa finalizado en 511.42200273569995 minutos
