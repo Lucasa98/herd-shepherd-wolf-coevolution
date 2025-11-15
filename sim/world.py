@@ -42,7 +42,6 @@ class World:
     def restart(self, shepherdModel):
         self.ticks = 0
         self.ticks_to_finish = None
-        self.entities = []
 
         # ===== Ovejas =====
         # solo reubicamos
@@ -115,8 +114,6 @@ class World:
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):
-        # Queria updatear ovejas y despues lobos en loops distintos pero da error, no se por que
-        # de todas formas DEBERIA updatear primero ovejas porque se agregan antes al array
         for e in self.entities:
             e.update(self.ovejas, self.pastores, self.objetivo_c)
 
@@ -140,6 +137,13 @@ class World:
 
         return True
 
+    def repitePosiciones(self):
+        for p in self.pastores:
+            if p.count_pos_repetida > self.params["max_reps"]:
+                return True
+
+        return False
+
     def centroGravedadOvejas(self):
         pos = np.array([o.position for o in self.ovejas])
         return np.mean(pos, axis=0)
@@ -160,18 +164,11 @@ class World:
 
     def drivingRate(self):
         """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor)"""
-        c = 0.0
+        c = np.float64(0.0)
         for p in self.pastores:
             c += p.count_pastoreando
 
         return c / self.ticks
-
-    def repitePosiciones(self):
-        for p in self.pastores:
-            if p.count_pos_repetida > self.params["max_reps"]:
-                return True
-
-        return False
 
     def distanciaPromedio(self):
         """Distancia promedio de las ovejas al objetivo"""

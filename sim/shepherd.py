@@ -7,17 +7,17 @@ class Shepherd:
         self.position = np.array(position, dtype=float)
         self.heading = np.array(heading, dtype=float)
         self.model = model
-        self.pastoreando: bool = False
+        self.driving: bool = False
         self.count_pastoreando: int = 0
         self.prev_pos = None
         self.count_pos_repetida = 0
 
-    def update(self, sheeps, shepherd, objetivo_c):
-        if self.pastoreando:
+    def update(self, sheeps, shepherds, objetivo_c):
+        if self.driving:
             self.count_pastoreando += 1
-            self.pastoreando = False
+            self.driving = False
 
-        self.model.update(self, sheeps, shepherd, objetivo_c)
+        self.model.update(self, sheeps, shepherds, objetivo_c)
 
         if np.dot(self.prev_pos - self.position, self.prev_pos - self.position) < 0.5:
             self.count_pos_repetida += 1

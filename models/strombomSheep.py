@@ -20,7 +20,7 @@ class StrombomSheep:
             dist = np.linalg.norm(diff)
             if dist < p["r_s"]:
                 sheep.pastoreada = True
-                s.pastoreando = True
+                s.driving = True
                 R_s += diff / dist
 
         # repulsion local de vecinas

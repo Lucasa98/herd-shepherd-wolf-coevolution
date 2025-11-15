@@ -25,38 +25,58 @@ class Evaluador:
             self.world.update()
             c += 1
 
-        # ===== FITNESS =====
-        # coeficientes
-        a = 1.0  # ticks_to_finish
-        b = 0.2  # ovejas_dentro_rate
-        c = 100.0  # driving_rate
-        d = 0.5  # distancia_promedio
+        # ===== TERMINOS DEL FITNESS =====
 
-        fit = 0.0
-        detail = {}
+        # (1) Cohesion: distancia de cada oveja al centroide
+        flock_c = np.mean([o.position for o in self.world.ovejas], axis=0)
+        d_cohesion = np.mean([
+            np.dot(o.position - flock_c, o.position - flock_c)
+            for o in self.world.ovejas
+        ])
+        # normalizar por la diagonal del mapa
+        diag = self.params["w_w"]**2 + self.params["w_h"]**2
+        cohesion_term = 1 - min(d_cohesion / diag, 1.0)
 
-        # si se quedo trabado, early-stopping y mal fitness
-        if self.world.repitePosiciones():
-            return -1.0, {"repite_posiciones": -1.0}
+        # (2) distancia del centroide al objetivo
+        goal = self.world.objetivo_c
+        flock_dist = np.dot(flock_c - goal, flock_c - goal)
+        # normalizar por la diagonal
+        to_goal_term = 1 - min(flock_dist / diag, 1.0)
 
-        # penalizacion por tiempo [0, a]
-        if self.world.ticks_to_finish is not None:  # si termino
-            detail["ticks_to_finish"] = a * N_steps / self.world.ticks_to_finish
-            fit += detail["ticks_to_finish"]
-        else:  # si no termino
-            detail["ticks_to_finish"] = 0
-            fit += detail["ticks_to_finish"]
+        # (3) ovejas en el objetivo
+        inside_term = self.world.ovejasDentroRate()  # already 0..1
 
-        # tasa de ovejas dentro del objetivo [0, b]
-        detail["ovejas_dentro_rate"] = b * self.world.ovejasDentroRate()
-        fit += detail["ovejas_dentro_rate"]
+        # (4) driving (0..1 scaled)
+        driving_term = self.world.drivingRate()
 
-        # tasa de ticks en que se guiaron ovejas [0, c]
-        detail["driving_rate"] = c * self.world.drivingRate()
-        fit += detail["driving_rate"]
+        # (5) Si completa, bonus
+        finish_term = 1.0 if self.world.ticks_to_finish is not None else 0.0
 
-        # distancia promedio de ovejas al objetivo [0, d]
-        detail["distancia_promedio"] = d * 1.0 / self.world.distanciaPromedio()
-        fit += detail["distancia_promedio"]
+        # ===== PESOS =====
+        w_cohesion = 1
+        w_goal     = 1.0
+        w_inside   = 1.0
+        w_drive    = 3.0
+        w_finish   = 2.0
 
-        return fit, detail
+        cohesion_term *= w_cohesion
+        to_goal_term *= w_goal
+        inside_term *= w_inside
+        driving_term *= w_drive
+        finish_term *= w_finish
+
+        fitness = (
+            cohesion_term +
+            to_goal_term +
+            inside_term +
+            driving_term +
+            finish_term
+        )
+
+        return fitness, {
+            "cohesion": cohesion_term,
+            "to_goal": to_goal_term,
+            "inside": inside_term,
+            "driving": driving_term,
+            "finish": finish_term
+        }

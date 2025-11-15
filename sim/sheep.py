@@ -10,9 +10,9 @@ class Sheep:
         self.model = model
         self.pastoreada = False
 
-    def update(self, sheeps, shepherd: list[Shepherd], objetivo_c):
+    def update(self, sheeps, shepherds: list[Shepherd], objetivo_c):
         # delegar el comportamiento al modelo
-        self.model.update(self, sheeps, shepherd)
+        self.model.update(self, sheeps, shepherds)
 
     def draw(self, surface: pygame.Surface):
         color = "blue" if self.pastoreada else "red"

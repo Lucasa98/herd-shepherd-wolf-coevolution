@@ -60,7 +60,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     rng: np.random.Generator = np.random.default_rng()
 
     logger.info("iniciando workers ...")
-    N_WORKERS = 6  # OJO!
+    N_WORKERS = 7  # OJO!
     # Arrancar workers
     in_q, out_q = mp.Queue(), mp.Queue()
     workers: list[mp.Process] = [
