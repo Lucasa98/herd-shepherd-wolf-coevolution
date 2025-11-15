@@ -29,12 +29,14 @@ class Evaluador:
 
         # (1) Cohesion: distancia de cada oveja al centroide
         flock_c = np.mean([o.position for o in self.world.ovejas], axis=0)
-        d_cohesion = np.mean([
-            np.dot(o.position - flock_c, o.position - flock_c)
-            for o in self.world.ovejas
-        ])
+        d_cohesion = np.mean(
+            [
+                np.dot(o.position - flock_c, o.position - flock_c)
+                for o in self.world.ovejas
+            ]
+        )
         # normalizar por la diagonal del mapa
-        diag = self.params["w_w"]**2 + self.params["w_h"]**2
+        diag = self.params["w_w"] ** 2 + self.params["w_h"] ** 2
         cohesion_term = 1 - min(d_cohesion / diag, 1.0)
 
         # (2) distancia del centroide al objetivo
@@ -54,10 +56,10 @@ class Evaluador:
 
         # ===== PESOS =====
         w_cohesion = 1
-        w_goal     = 1.0
-        w_inside   = 1.0
-        w_drive    = 3.0
-        w_finish   = 2.0
+        w_goal = 0.5
+        w_inside = 1.0
+        w_drive = 3.0
+        w_finish = 2.0
 
         cohesion_term *= w_cohesion
         to_goal_term *= w_goal
@@ -66,11 +68,7 @@ class Evaluador:
         finish_term *= w_finish
 
         fitness = (
-            cohesion_term +
-            to_goal_term +
-            inside_term +
-            driving_term +
-            finish_term
+            cohesion_term + to_goal_term + inside_term + driving_term + finish_term
         )
 
         return fitness, {
@@ -78,5 +76,5 @@ class Evaluador:
             "to_goal": to_goal_term,
             "inside": inside_term,
             "driving": driving_term,
-            "finish": finish_term
+            "finish": finish_term,
         }
