@@ -23,7 +23,9 @@ class NNShepherdModel:
         # NEAREST OVEJAS
         ovejas_pos = np.array([])
         if self.params["pers_ovejas"] > 0 and len(sheeps) > 0:
-            relative_to_sheeps = np.array([s.position - shepherd.position for s in sheeps])
+            relative_to_sheeps = np.array(
+                [s.position - shepherd.position for s in sheeps]
+            )
             dists = np.sum(relative_to_sheeps**2, axis=1)
             cercanas_idx = np.argpartition(dists, self.params["pers_ovejas"] - 1)[
                 : self.params["pers_ovejas"]
