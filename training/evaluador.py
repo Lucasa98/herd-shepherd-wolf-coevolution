@@ -11,7 +11,14 @@ class Evaluador:
         self.world: World = World(params["w_w"], params["w_h"], params, rng)
 
     def evaluar(self, gen: np.ndarray[np.uint8], N_steps: int) -> float:
-        nn_model = Utils.genome_to_model(gen, self.params)
+        nn_model = Utils.genome_to_model(
+            gen,
+            self.params["n_inputs"],
+            self.params["hidden_lay_1"],
+            self.params["hidden_lay_2"],
+            self.params["min_w"],
+            self.params["max_w"],
+        )
         shepherdModel = NNShepherdModel(self.params, self.rng, nn_model)
 
         self.world.restart(shepherdModel)
@@ -59,7 +66,7 @@ class Evaluador:
         w_goal = 0.5
         w_inside = 1.0
         w_drive = 3.0
-        w_finish = 2.0
+        w_finish = 0.5  # si es alto, cuando uno gana de casualidad, el resto la tiene muy dificil
 
         cohesion_term *= w_cohesion
         to_goal_term *= w_goal

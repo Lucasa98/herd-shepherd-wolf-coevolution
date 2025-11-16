@@ -1,3 +1,4 @@
+from numba import jit
 import numpy as np
 from sim.shepherd import Shepherd
 from sim.sheep import Sheep
@@ -16,24 +17,15 @@ class StrombomSheep:
         sheep.pastoreada = False
         R_s = np.zeros(2)
         for s in shepherds:
-            diff = sheep.position - s.position
-            dist = np.linalg.norm(diff)
+            diff, dist = self.diffdist(sheep.position, s.position)
             if dist < p["r_s"]:
                 sheep.pastoreada = True
                 s.driving = True
                 R_s += diff / dist
 
         # repulsion local de vecinas
-        repelida = False
-        R_a = np.zeros(2)
-        for other in sheeps:
-            if other is sheep:
-                continue
-            diff = sheep.position - other.position
-            dist = np.linalg.norm(diff)
-            if dist < p["r_a"] and dist > 0:
-                repelida = True
-                R_a += diff / dist
+        others = np.array([s.position for s in sheeps if s is not sheep])
+        repelida, R_a = self.repulsionLocal(sheep.position, others, p["r_a"])
 
         # Si no hay repulsion de ningun tipo ni random walk, TERMINAMOS
         if (
@@ -49,33 +41,91 @@ class StrombomSheep:
         # Atraccion al centro de gravedad (SOLO si hay repulsion de pastor)
         C_i = np.zeros(2)
         if sheep.pastoreada:
-            diffs = np.array(
-                [
-                    other.position - sheep.position
-                    for other in sheeps
-                    if other is not sheep
-                ]
-            )
-            dists = np.linalg.norm(diffs, axis=1)
-            nearest_idx = np.argsort(dists)[: p["n_neigh"]]
-            C_i = (
-                np.mean(diffs[nearest_idx], axis=0)
-                if len(nearest_idx) > 0
-                else np.zeros(2)
-            )
+            C_i = self.atraccionCentroGravedad(sheep.position, others, p["n_neigh"])
 
         # ===== Combinar =====
-        H_new = p["h"] * sheep.heading + p["e"] * noise
-
-        if sheep.pastoreada:
-            H_new += p["c"] * C_i + p["rho_s"] * R_s
-
-        if repelida:
-            H_new += p["rho_a"] * R_a
-
-        # Normalizar
-        H_new /= np.linalg.norm(H_new) + 1e-8
+        H_new = self.combinar(
+            p["h"],
+            p["c"],
+            p["e"],
+            p["rho_s"],
+            p["rho_a"],
+            sheep.heading,
+            noise,
+            sheep.pastoreada,
+            repelida,
+            C_i,
+            R_a,
+            R_s,
+        )
         sheep.heading = H_new
 
         # ===== Update =====
         sheep.position += p["delta"] * sheep.heading
+
+    @staticmethod
+    @jit(nopython=True)
+    def diffdist(A, B):
+        diff = A - B
+        return diff, np.linalg.norm(diff)
+
+    @staticmethod
+    @jit(nopython=True)
+    def repulsionLocal(sheepPosition, sheeps, r_a):
+        repelida = False
+        R_a = np.zeros(2)
+        for other in sheeps:
+            diff = sheepPosition - other
+            dist = np.linalg.norm(diff)
+            if dist < r_a and dist > 0:
+                repelida = True
+                R_a += diff / dist
+
+        return repelida, R_a
+
+    @staticmethod
+    @jit(nopython=True)
+    def atraccionCentroGravedad(sheepPosition, others, n_neigh):
+        if n_neigh <= 0:
+            return np.zeros(2)
+        diffs = others - sheepPosition
+        n = diffs.shape[0]
+        dists = np.empty(n, dtype=np.float64)
+        for i in range(n):
+            dists[i] = np.linalg.norm(diffs[i])
+        cercanas_idx = np.argpartition(dists, n_neigh - 1)[:n_neigh]
+        C_i = np.zeros(2, dtype=np.float64)
+        for i in range(n_neigh):
+            C_i[0] += diffs[cercanas_idx[i], 0]
+            C_i[1] += diffs[cercanas_idx[i], 1]
+        C_i[0] /= n_neigh
+        C_i[1] /= n_neigh
+        return C_i
+
+    @staticmethod
+    @jit(nopython=True)
+    def combinar(
+        h,
+        c,
+        e,
+        rho_s,
+        rho_a,
+        sheepHeading,
+        noise,
+        sheepPastoreada,
+        repelida,
+        C_i,
+        R_a,
+        R_s,
+    ):
+        H_new = h * sheepHeading + e * noise
+
+        if sheepPastoreada:
+            H_new += c * C_i + rho_s * R_s
+
+        if repelida:
+            H_new += rho_a * R_a
+
+        # Normalizar
+        H_new /= np.linalg.norm(H_new) + 1e-8
+        return H_new

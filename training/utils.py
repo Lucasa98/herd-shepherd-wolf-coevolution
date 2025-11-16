@@ -16,11 +16,11 @@ class Utils:
         return torch.tensor(floats, dtype=torch.float32)
 
     @staticmethod
-    def genome_to_model(genome_bits: np.ndarray, params) -> ShepherdNN:
-        model = ShepherdNN(
-            params["n_inputs"], params["hidden_lay_1"], params["hidden_lay_2"]
-        )
-        weights = Utils.genome_to_weights(genome_bits, params["min_w"], params["max_w"])
+    def genome_to_model(
+        genome_bits: np.ndarray, n_inputs, hidden_lay_1, hidden_lay_2, min_w, max_w
+    ) -> ShepherdNN:
+        model = ShepherdNN(n_inputs, hidden_lay_1, hidden_lay_2)
+        weights = Utils.genome_to_weights(genome_bits, min_w, max_w)
         torch.nn.utils.vector_to_parameters(
             weights[: sum(p.numel() for p in model.parameters())], model.parameters()
         )

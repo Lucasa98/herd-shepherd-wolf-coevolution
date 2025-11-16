@@ -29,7 +29,14 @@ class World:
         if params["model"] == "NN":
             if "modelo_path" in params and params["modelo_path"]:
                 genome = np.load(params["modelo_path"])
-                nn_model = Utils.genome_to_model(genome, params)
+                nn_model = Utils.genome_to_model(
+                    genome,
+                    self.params["n_inputs"],
+                    self.params["hidden_lay_1"],
+                    self.params["hidden_lay_2"],
+                    self.params["min_w"],
+                    self.params["max_w"],
+                )
             shepherdModel = NNShepherdModel(params, rng, nn_model)
         else:
             shepherdModel = FollowMouseShepherd(params, rng)
@@ -105,12 +112,15 @@ class World:
                     [
                         self.width - 2 * self.params["obj_r"],
                         self.height - 2 * self.params["obj_r"],
-                    ]
+                    ],
+                    dtype=np.float64,
                 )
                 * self.rng.uniform(0, 1, size=(2))
             ) + self.params["obj_r"]
         else:
-            self.objetivo_c = np.array([self.params["obj_x"], self.params["obj_y"]])
+            self.objetivo_c = np.array(
+                [self.params["obj_x"], self.params["obj_y"]], dtype=np.float64
+            )
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):
