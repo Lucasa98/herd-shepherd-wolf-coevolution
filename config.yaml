@@ -17,6 +17,7 @@ delta: 1.0  # distancia por paso
 n_neigh: 4  # numero de vecinos para cohesion
 r_walk: 0.05  # probabilidad de random walk
 # PASTOR
+N_pastores: 1
 p_delta: 1.5  # distancia por paso
 model: "NN"  # modelo de comportamiento del pastor (followMouse | NN)
 min_w: -15  # valor minimo de peso

@@ -66,13 +66,14 @@ class World:
 
         # ===== Pastor =====
         # solo reubicamos
-        start_pos = np.array([self.width, self.height]) * self.rng.uniform(
-            0, 1, size=(2)
-        )
+        N = self.params["N_pastores"]
+        rand_positions = self.rng.uniform(0, 1, size=(N, 2))
+        rand_positions[:, 0] = rand_positions[:, 0] * self.width
+        rand_positions[:, 1] = rand_positions[:, 1] * self.height
         heading = np.array([1.0, 0.0], dtype=float)  # vector unitario en X
         for i, pastor in enumerate(self.pastores):
             pastor.count_pastoreando = 0
-            pastor.position = start_pos
+            pastor.position = rand_positions[i]
             pastor.heading = heading
             pastor.model = shepherdModel
 
@@ -94,16 +95,18 @@ class World:
         rand_positions[:, 1] = (
             rand_positions[:, 1] * self.init_height + self.init_height_offset
         )
-        self.ovejas = [Sheep(rand_positions[i], [0, 1], model=model) for i in range(N)]
+        self.ovejas = [Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model=model) for i in range(N)]
         self.entities.extend(self.ovejas)
 
     def initPastores(self, model):
+        # TODO: soportar mas pastores
         # colocar el pastor cerca del centro inicial de las ovejas
-        cg = np.mean([o.position for o in self.ovejas], axis=0)
-        offset = np.array([5.0, 0.0])  # pequeño desplazamiento
-        start_pos = cg + offset
+        N = self.params["N_pastores"]
+        rand_positions = self.rng.uniform(0, 1, size=(N, 2))
+        rand_positions[:, 0] = rand_positions[:, 0] * self.width
+        rand_positions[:, 1] = rand_positions[:, 1] * self.height
         heading = np.array([1.0, 0.0], dtype=float)
-        self.pastores = [Shepherd(start_pos, heading, model)]
+        self.pastores = [Shepherd(rand_positions[i], heading, model) for i in range(N)]
         self.entities.extend(self.pastores)
 
     def initObjetivo(self):
