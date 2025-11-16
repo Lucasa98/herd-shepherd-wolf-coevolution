@@ -9,7 +9,12 @@ class StrombomSheep:
         self.params = params
         self.rng = rng
 
-    def update(self, sheep: Sheep, sheeps: list[Sheep], shepherds: list[Shepherd]):
+    def update(
+        self,
+        sheep: Sheep,
+        others: np.ndarray[np.float64],
+        shepherds: np.ndarray[Shepherd],
+    ):
         p = self.params
 
         # ===== Calcular fuerzas =====
@@ -24,7 +29,6 @@ class StrombomSheep:
                 R_s += diff / dist
 
         # repulsion local de vecinas
-        others = np.array([s.position for s in sheeps if s is not sheep])
         repelida, R_a = self.repulsionLocal(sheep.position, others, p["r_a"])
 
         # Si no hay repulsion de ningun tipo ni random walk, TERMINAMOS
@@ -71,36 +75,74 @@ class StrombomSheep:
 
     @staticmethod
     @jit(nopython=True)
-    def repulsionLocal(sheepPosition, sheeps, r_a):
+    def repulsionLocal(sheep_pos, others_pos, r_a):
+        R_a0 = 0.0
+        R_a1 = 0.0
         repelida = False
-        R_a = np.zeros(2)
-        for other in sheeps:
-            diff = sheepPosition - other
-            dist = np.linalg.norm(diff)
-            if dist < r_a and dist > 0:
-                repelida = True
-                R_a += diff / dist
-
+        m = others_pos.shape[0]
+        for i in range(m):
+            dx = sheep_pos[0] - others_pos[i, 0]
+            dy = sheep_pos[1] - others_pos[i, 1]
+            dist2 = dx * dx + dy * dy
+            if dist2 > 0.0:
+                if dist2 < r_a * r_a:
+                    inv = 1.0 / (dist2**0.5)
+                    R_a0 += dx * inv
+                    R_a1 += dy * inv
+                    repelida = True
+        R_a = np.empty(2, dtype=np.float64)
+        R_a[0] = R_a0
+        R_a[1] = R_a1
         return repelida, R_a
 
     @staticmethod
     @jit(nopython=True)
-    def atraccionCentroGravedad(sheepPosition, others, n_neigh):
-        if n_neigh <= 0:
-            return np.zeros(2)
-        diffs = others - sheepPosition
-        n = diffs.shape[0]
-        dists = np.empty(n, dtype=np.float64)
-        for i in range(n):
-            dists[i] = np.linalg.norm(diffs[i])
-        cercanas_idx = np.argpartition(dists, n_neigh - 1)[:n_neigh]
-        C_i = np.zeros(2, dtype=np.float64)
-        for i in range(n_neigh):
-            C_i[0] += diffs[cercanas_idx[i], 0]
-            C_i[1] += diffs[cercanas_idx[i], 1]
-        C_i[0] /= n_neigh
-        C_i[1] /= n_neigh
-        return C_i
+    def atraccionCentroGravedad(sheep_pos, others_pos, n_neigh):
+        # vector promedio a las n_neigh ovejas mas cercanas
+        m = others_pos.shape[0]
+        if m == 0 or n_neigh <= 0:
+            return np.zeros(2, dtype=np.float64)
+
+        # compute distances
+        dists = np.empty(m, dtype=np.float64)
+        for i in range(m):
+            dx = others_pos[i, 0] - sheep_pos[0]
+            dy = others_pos[i, 1] - sheep_pos[1]
+            dists[i] = (dx * dx + dy * dy) ** 0.5
+
+        # clamp n_neigh to m
+        k = n_neigh if n_neigh <= m else m
+
+        # find k smallest indices by partial selection (numba: simple selection)
+        # simple selection loop (k usually small)
+        idxs = np.empty(k, dtype=np.int64)
+        # initialize with first k
+        for i in range(k):
+            idxs[i] = i
+        # selection: sort small subset by scanning (cheap if k small)
+        for i in range(k, m):
+            # find max among idxs
+            maxj = 0
+            maxd = dists[idxs[0]]
+            for j in range(1, k):
+                if dists[idxs[j]] > maxd:
+                    maxd = dists[idxs[j]]
+                    maxj = j
+            if dists[i] < maxd:
+                idxs[maxj] = i
+
+        # sum vectors
+        cx = 0.0
+        cy = 0.0
+        for j in range(k):
+            cx += others_pos[idxs[j], 0] - sheep_pos[0]
+            cy += others_pos[idxs[j], 1] - sheep_pos[1]
+        cx /= k
+        cy /= k
+        out = np.empty(2, dtype=np.float64)
+        out[0] = cx
+        out[1] = cy
+        return out
 
     @staticmethod
     @jit(nopython=True)
@@ -118,14 +160,18 @@ class StrombomSheep:
         R_a,
         R_s,
     ):
-        H_new = h * sheepHeading + e * noise
-
+        H0 = h * sheepHeading[0] + e * noise[0]
+        H1 = h * sheepHeading[1] + e * noise[1]
         if sheepPastoreada:
-            H_new += c * C_i + rho_s * R_s
-
+            H0 += c * C_i[0] + rho_s * R_s[0]
+            H1 += c * C_i[1] + rho_s * R_s[1]
         if repelida:
-            H_new += rho_a * R_a
-
-        # Normalizar
-        H_new /= np.linalg.norm(H_new) + 1e-8
-        return H_new
+            H0 += rho_a * R_a[0]
+            H1 += rho_a * R_a[1]
+        norm = (H0 * H0 + H1 * H1) ** 0.5 + 1e-12
+        H0 /= norm
+        H1 /= norm
+        out = np.empty(2, dtype=np.float64)
+        out[0] = H0
+        out[1] = H1
+        return out

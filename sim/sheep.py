@@ -1,6 +1,5 @@
 import numpy as np
 import pygame
-from sim.shepherd import Shepherd
 from sim.entity import Entity
 
 
@@ -11,9 +10,13 @@ class Sheep(Entity):
         self.model = model
         self.pastoreada = False
 
-    def update(self, sheeps, shepherds: list[Shepherd], objetivo_c):
+    def update(self, sheeps, shepherds, objetivo_c):
         # delegar el comportamiento al modelo
-        self.model.update(self, sheeps, shepherds)
+        self.model.update(
+            self,
+            np.array([s.position for s in sheeps if s is not self]),
+            shepherds,
+        )
 
     def draw(self, surface: pygame.Surface):
         color = "blue" if self.pastoreada else "red"

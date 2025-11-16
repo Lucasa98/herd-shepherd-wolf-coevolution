@@ -18,7 +18,14 @@ class Shepherd(Entity):
             self.count_pastoreando += 1
             self.driving = False
 
-        self.model.update(self, sheeps, shepherds, objetivo_c)
+        self.model.update(
+            self,
+            np.array([s.position for s in sheeps]),
+            np.asarray(
+                [s.position for s in shepherds if s is not self], dtype=np.float64
+            ).reshape(-1, 2),
+            objetivo_c,
+        )
 
         if np.dot(self.prev_pos - self.position, self.prev_pos - self.position) < 0.5:
             self.count_pos_repetida += 1

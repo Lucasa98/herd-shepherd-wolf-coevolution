@@ -1,5 +1,6 @@
 import pygame
 
+
 class Entity:
     def update(self, sheeps, shepherds, objetivo_c):
         pass

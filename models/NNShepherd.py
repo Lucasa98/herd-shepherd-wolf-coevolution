@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import numpy as np
 from sim.shepherd import Shepherd
-from sim.sheep import Sheep
 
 
 class NNShepherdModel:
@@ -15,8 +14,8 @@ class NNShepherdModel:
     def update(
         self,
         shepherd: Shepherd,
-        sheeps: list[Sheep],
-        shepherds: list[Shepherd],
+        sheeps: np.ndarray[np.float64],
+        shepherds: np.ndarray[np.float64],
         objetivo_c: np.ndarray[np.float64],
     ):
         """
@@ -25,14 +24,12 @@ class NNShepherdModel:
         """
         ovejas_pos = self.ovejasPos(
             shepherdPosition=shepherd.position,
-            sheeps=np.array([s.position for s in sheeps]),
+            sheeps=sheeps,
             pers_ovejas=self.params["pers_ovejas"],
         )
 
         pastores_pos = self.pastoresPos(
-            shepherds=np.asarray(
-                [s.position for s in shepherds if s is not shepherd], dtype=np.float64
-            ).reshape(-1, 2),
+            shepherds=shepherds,
             shepherdPosition=shepherd.position,
             pers_pastores=self.params["pers_pastores"],
         )
