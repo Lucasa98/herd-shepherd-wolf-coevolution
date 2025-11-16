@@ -6,6 +6,7 @@ from models.followMouseShepherd import FollowMouseShepherd
 from models.NNShepherd import NNShepherdModel
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
+from sim.entity import Entity
 from training.utils import Utils
 
 
@@ -17,7 +18,7 @@ class World:
         self.ticks_to_finish = None
         self.width = width
         self.height = height
-        self.entities = []
+        self.entities = np.empty(self.params["N"] + self.params["N_pastores"], dtype=Entity)
 
         # ===== Ovejas =====
         sheepModel = StrombomSheep(params, rng)
@@ -95,8 +96,11 @@ class World:
         rand_positions[:, 1] = (
             rand_positions[:, 1] * self.init_height + self.init_height_offset
         )
-        self.ovejas = [Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model=model) for i in range(N)]
-        self.entities.extend(self.ovejas)
+        self.ovejas = [
+            Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model=model)
+            for i in range(N)
+        ]
+        self.entities[:N] = self.ovejas
 
     def initPastores(self, model):
         # TODO: soportar mas pastores
@@ -107,7 +111,7 @@ class World:
         rand_positions[:, 1] = rand_positions[:, 1] * self.height
         heading = np.array([1.0, 0.0], dtype=float)
         self.pastores = [Shepherd(rand_positions[i], heading, model) for i in range(N)]
-        self.entities.extend(self.pastores)
+        self.entities[self.params["N"]:] = self.pastores
 
     def initObjetivo(self):
         if self.params["obj_x"] == -1 and self.params["obj_y"] == -1:

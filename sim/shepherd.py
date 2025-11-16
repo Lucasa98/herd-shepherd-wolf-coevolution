@@ -1,8 +1,9 @@
 import numpy as np
 import pygame
+from sim.entity import Entity
 
 
-class Shepherd:
+class Shepherd(Entity):
     def __init__(self, position, heading, model):
         self.position = np.array(position, dtype=float)
         self.heading = np.array(heading, dtype=float)
