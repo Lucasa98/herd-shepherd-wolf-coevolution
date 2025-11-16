@@ -54,7 +54,7 @@ class Evaluador:
         w_goal = 0.5
         w_inside = 1.0
         w_drive = 3.0
-        w_finish = 0.5  # si es alto, cuando uno gana de casualidad, el resto la tiene muy dificil
+        w_finish = 0.0  # por ahora no nos interesa, "detiene" la evolucion de otras caracteristicas
 
         cohesion_term *= w_cohesion
         to_goal_term *= w_goal

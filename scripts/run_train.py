@@ -31,6 +31,58 @@ def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
     return fit, det
 
 
+def evolucionar(g, poblacion, ventana, params, sorted, steps_rate, N_steps, in_q, out_q, fit, fit_detail, fit_elite, fit_history):
+    # 1) elegir progenitores: un elite y el resto por ventana
+    progenitores = np.empty(
+        (params["progenitores"], params["n_bits"]), dtype=np.uint8
+    )
+    progenitores[0] = poblacion[sorted[-1]]  # elite
+
+    v = ventana
+    for i in range(1, params["progenitores"]):
+        progenitores[i] = poblacion[sorted[-rng.integers(0, v, 1)]]
+        v += ventana
+
+    # 2) cruzar progenitores (cruza simple)
+    poblacion[: params["progenitores"]] = progenitores
+    for i in range(params["progenitores"], params["poblacion"]):
+        p1, p2 = rng.integers(
+            0, params["progenitores"], 2
+        )  # tomar progenitores al azar
+
+        # punto de cruza: elegir inicio y fin del segmento a cruzar
+        c1, c2 = np.sort(rng.integers(0, params["n_bits"], 2))
+
+        # cruzar: segmento del padre 1 y el resto del padre 2
+        poblacion[i, :c1] = progenitores[p2, :c1]  # antes de c1
+        poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
+        poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
+
+    # mutar a nivel de gen
+    N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
+    if N_mut > 0:
+        # Tomar indices aleatorios y flipear esos bits
+        idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
+        flat = poblacion.reshape(-1)
+        flat[idx] ^= 1
+
+    # ovejas y ticks para esta generacion
+    N_steps += steps_rate
+    # 3) evaluar fitness
+    fit, fit_detail = evaluar_poblacion(
+        poblacion, int(np.floor(N_steps)), in_q, out_q
+    )
+    sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
+    if fit[sorted[-1]] > fit_elite:
+        logger.info(
+            f"generacion {g+1} - fitness superado: %.5f, %s",
+            fit[sorted[-1]],
+            {k: f"{v:.5f}" for k, v in fit_detail[sorted[-1]].items()},
+        )
+        fit_elite = fit[sorted[-1]]
+        fit_history = np.vstack([fit_history, [g + 1, fit_elite]])
+
+
 if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     logger = logging.getLogger(__name__)
@@ -100,58 +152,16 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     logger.info("iniciando evolucion")
     t_ini = time.perf_counter()
     for g in tqdm(range(params["generaciones"])):
-        # 1) elegir progenitores: un elite y el resto por ventana
-        progenitores = np.empty(
-            (params["progenitores"], params["n_bits"]), dtype=np.uint8
-        )
-        progenitores[0] = poblacion[sorted[-1]]  # elite
-
-        v = ventana
-        for i in range(1, params["progenitores"]):
-            progenitores[i] = poblacion[sorted[-rng.integers(0, v, 1)]]
-            v += ventana
-
-        # 2) cruzar progenitores (cruza simple)
-        poblacion[: params["progenitores"]] = progenitores
-        for i in range(params["progenitores"], params["poblacion"]):
-            p1, p2 = rng.integers(
-                0, params["progenitores"], 2
-            )  # tomar progenitores al azar
-
-            # punto de cruza: elegir inicio y fin del segmento a cruzar
-            c1, c2 = np.sort(rng.integers(0, params["n_bits"], 2))
-
-            # cruzar: segmento del padre 1 y el resto del padre 2
-            poblacion[i, :c1] = progenitores[p2, :c1]  # antes de c1
-            poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
-            poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
-
-        # mutar a nivel de gen
-        N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
-        if N_mut > 0:
-            # Tomar indices aleatorios y flipear esos bits
-            idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
-            flat = poblacion.reshape(-1)
-            flat[idx] ^= 1
-
-        # ovejas y ticks para esta generacion
-        N_steps += steps_rate
-        # 3) evaluar fitness
-        fit, fit_detail = evaluar_poblacion(
-            poblacion, int(np.floor(N_steps)), in_q, out_q
-        )
-        sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
-        if fit[sorted[-1]] > fit_elite:
-            logger.info(
-                f"generacion {g+1} - fitness superado: %.5f, %s",
-                fit[sorted[-1]],
-                {k: f"{v:.5f}" for k, v in fit_detail[sorted[-1]].items()},
-            )
-            fit_elite = fit[sorted[-1]]
-            fit_history = np.vstack([fit_history, [g + 1, fit_elite]])
+        try:
+            evolucionar(g, poblacion, ventana, params, sorted, steps_rate, N_steps, in_q, out_q, fit, fit_detail, fit_elite, fit_history)
+        except KeyboardInterrupt:
+            logger.info(f"evolucion interrumpida en generacion {g}")
+            break
 
     t_total = time.perf_counter() - t_ini
-    logger.info("evolucion terminada exitosamente")
+
+    if N_steps >= params["max_steps"]:
+        logger.info("evolucion terminada exitosamente")
 
     logger.info("deteniendo workers")
     # Detener workers
