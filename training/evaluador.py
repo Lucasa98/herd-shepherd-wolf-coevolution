@@ -35,22 +35,10 @@ class Evaluador:
         # ===== TERMINOS DEL FITNESS =====
 
         # (1) Cohesion: distancia de cada oveja al centroide
-        flock_c = np.mean([o.position for o in self.world.ovejas], axis=0)
-        d_cohesion = np.mean(
-            [
-                np.dot(o.position - flock_c, o.position - flock_c)
-                for o in self.world.ovejas
-            ]
-        )
-        # normalizar por la diagonal del mapa
-        diag = self.params["w_w"] ** 2 + self.params["w_h"] ** 2
-        cohesion_term = 1 - min(d_cohesion / diag, 1.0)
+        cohesion_term = self.world.cohesionOvejas()
 
         # (2) distancia del centroide al objetivo
-        goal = self.world.objetivo_c
-        flock_dist = np.dot(flock_c - goal, flock_c - goal)
-        # normalizar por la diagonal
-        to_goal_term = 1 - min(flock_dist / diag, 1.0)
+        to_goal_term = self.world.distanciaCentroideObjetivo()
 
         # (3) ovejas en el objetivo
         inside_term = self.world.ovejasDentroRate()  # already 0..1

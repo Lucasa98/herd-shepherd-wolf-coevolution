@@ -1,3 +1,4 @@
+from numba import jit
 import numpy as np
 import pygame
 from models.strombomSheep import StrombomSheep
@@ -148,29 +149,50 @@ class World:
         return True
 
     def repitePosiciones(self):
-        for p in self.pastores:
-            if p.count_pos_repetida > self.params["max_reps"]:
-                return True
+        return self.repitePosicionesStatic(
+            np.array([p.count_pos_repetida for p in self.pastores]),
+            self.params["max_reps"],
+        )
 
+    @staticmethod
+    @jit(nopython=True)
+    def repitePosicionesStatic(pastoresCountPosRepetidas, max_reps):
+        if (pastoresCountPosRepetidas > max_reps).any():
+            return True
         return False
 
     def centroGravedadOvejas(self):
-        pos = np.array([o.position for o in self.ovejas])
-        return np.mean(pos, axis=0)
+        return self.centroGravedadOvejasStatic(
+            np.array([o.position for o in self.ovejas])
+        )
+
+    @staticmethod
+    @jit(nopython=True)
+    def centroGravedadOvejasStatic(ovejasPos):
+        mean = np.zeros(2, dtype=np.float64)
+        mean[0] = np.mean(ovejasPos[:, 0])
+        mean[1] = np.mean(ovejasPos[:, 1])
+        return mean
 
     def ovejasDentroRate(self):
-        """La tasa de ovejas dentro del objetivo. 1 -> todas las ovejas dentro de l objetivo"""
-        r_2 = self.objetivo_r * self.objetivo_r
-        # A la primera que encuentra afuera, retorna falso
+        return self.ovejasDentroRateStatic(
+            self.objetivo_r,
+            self.objetivo_c,
+            np.array([o.position for o in self.ovejas]),
+            self.params["N"],
+        )
+
+    @staticmethod
+    @jit(nopython=True)
+    def ovejasDentroRateStatic(objetivo_r, objetivo_c, ovejasPos, N):
+        r_2 = objetivo_r * objetivo_r
+        diffs = ovejasPos - objetivo_c
         c = 0.0
-        for o in self.ovejas:
-            diff = o.position - self.objetivo_c
-            if np.dot(diff, diff) <= r_2:
+        for i in range(ovejasPos.shape[0]):
+            if diffs[i, 0] * diffs[i, 0] + diffs[i, 1] * diffs[i, 1] <= r_2:
                 c += 1.0
 
-        # TODO: se podria mejorar calculando frac=1/self.params["N"] al inicio
-        # y haciendo simplemente c += frac
-        return c / self.params["N"]
+        return c / N
 
     def drivingRate(self):
         """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor)"""
@@ -182,9 +204,80 @@ class World:
 
     def distanciaPromedio(self):
         """Distancia promedio de las ovejas al objetivo"""
-        dists2 = 0  # sumatoria de las distancias al cuadrado (para no hacer la raiz que es cara)
-        for o in self.ovejas:
-            diff = self.objetivo_c - o.position
-            dists2 += np.dot(diff, diff)
+        return self.distanciaPromedioStatic(
+            np.array([o.position for o in self.ovejas]), self.objetivo_c
+        )
 
-        return dists2 / len(self.ovejas)
+    @staticmethod
+    @jit(nopython=True)
+    def distanciaPromedioStatic(ovejasPos, objetivo_c):
+        dists2 = 0
+        diffs = ovejasPos - objetivo_c
+        for i in range(ovejasPos.shape[0]):
+            dists2 += diffs[i, 0] * diffs[i, 0] + diffs[i, 1] * diffs[i, 1]
+
+        return dists2 / ovejasPos.shape[0]
+
+    def cohesionOvejas(self):
+        return self.cohesionOvejasStatic(
+            np.array([o.position for o in self.ovejas]),
+            self.params["w_w"],
+            self.params["w_h"],
+        )
+
+    @staticmethod
+    @jit(nopython=True)
+    def cohesionOvejasStatic(ovejasPos, w_w, w_h):
+        n = ovejasPos.shape[0]
+
+        # means
+        meanx = 0.0
+        meany = 0.0
+        for i in range(n):
+            meanx += ovejasPos[i, 0]
+            meany += ovejasPos[i, 1]
+        meanx /= n
+        meany /= n
+
+        # sum de distancias al cuadrado
+        dist2 = 0.0
+        for i in range(n):
+            dx = ovejasPos[i, 0] - meanx
+            dy = ovejasPos[i, 1] - meany
+            dist2 += dx * dx + dy * dy
+
+        # normalize by diagonal squared
+        diag = w_w * w_w + w_h * w_h
+        v = dist2 / diag
+        if v > 1.0:
+            v = 1.0
+
+        return 1.0 - v
+
+    def distanciaCentroideObjetivo(self):
+        return self.distanciaCentroideObjetivoStatic(
+            np.array([o.position for o in self.ovejas]),
+            self.objetivo_c,
+            self.params["w_w"],
+            self.params["w_h"],
+        )
+
+    @staticmethod
+    @jit(nopython=True)
+    def distanciaCentroideObjetivoStatic(ovejasPos, objetivo_c, w_w, w_h):
+        n = ovejasPos.shape[0]
+        # means
+        meanx = 0.0
+        meany = 0.0
+        for i in range(n):
+            meanx += ovejasPos[i, 0]
+            meany += ovejasPos[i, 1]
+        meanx /= n
+        meany /= n
+
+        dx = meanx - objetivo_c[0]
+        dy = meany - objetivo_c[1]
+        flock_dist = dx * dx + dy * dy
+        # normalizar por la diagonal
+        diag = w_w * w_w + w_h * w_h
+        return 1 - min(flock_dist / diag, 1.0)
