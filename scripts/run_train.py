@@ -31,11 +31,23 @@ def evaluar_poblacion(poblacion, N_ticks: int, in_q, out_q):
     return fit, det
 
 
-def evolucionar(g, poblacion, ventana, params, sorted, steps_rate, N_steps, in_q, out_q, fit, fit_detail, fit_elite, fit_history):
+def evolucionar(
+    g,
+    poblacion,
+    ventana,
+    params,
+    sorted,
+    steps_rate,
+    N_steps,
+    in_q,
+    out_q,
+    fit,
+    fit_detail,
+    fit_elite,
+    fit_history,
+):
     # 1) elegir progenitores: un elite y el resto por ventana
-    progenitores = np.empty(
-        (params["progenitores"], params["n_bits"]), dtype=np.uint8
-    )
+    progenitores = np.empty((params["progenitores"], params["n_bits"]), dtype=np.uint8)
     progenitores[0] = poblacion[sorted[-1]]  # elite
 
     v = ventana
@@ -69,9 +81,7 @@ def evolucionar(g, poblacion, ventana, params, sorted, steps_rate, N_steps, in_q
     # ovejas y ticks para esta generacion
     N_steps += steps_rate
     # 3) evaluar fitness
-    fit, fit_detail = evaluar_poblacion(
-        poblacion, int(np.floor(N_steps)), in_q, out_q
-    )
+    fit, fit_detail = evaluar_poblacion(poblacion, int(np.floor(N_steps)), in_q, out_q)
     sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
     if fit[sorted[-1]] > fit_elite:
         logger.info(
@@ -153,7 +163,21 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     t_ini = time.perf_counter()
     for g in tqdm(range(params["generaciones"])):
         try:
-            evolucionar(g, poblacion, ventana, params, sorted, steps_rate, N_steps, in_q, out_q, fit, fit_detail, fit_elite, fit_history)
+            evolucionar(
+                g,
+                poblacion,
+                ventana,
+                params,
+                sorted,
+                steps_rate,
+                N_steps,
+                in_q,
+                out_q,
+                fit,
+                fit_detail,
+                fit_elite,
+                fit_history,
+            )
         except KeyboardInterrupt:
             logger.info(f"evolucion interrumpida en generacion {g}")
             break
