@@ -1,4 +1,5 @@
 import numpy as np
+import hidepygame
 import pygame
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
