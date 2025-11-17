@@ -1,4 +1,3 @@
-import hidepygame
 import pygame
 from pygame.locals import HWSURFACE, DOUBLEBUF, RESIZABLE, VIDEORESIZE
 from sim.world import World

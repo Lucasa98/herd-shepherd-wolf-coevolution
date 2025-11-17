@@ -1,4 +1,3 @@
-import hidepygame
 import pygame
 import numpy as np
 

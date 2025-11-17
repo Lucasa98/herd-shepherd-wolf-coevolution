@@ -1,4 +1,3 @@
-import hidepygame
 import pygame
 
 

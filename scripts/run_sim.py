@@ -1,7 +1,10 @@
+import hidepygame
 import yaml
 import os
 import json
 from sim.window import Window
+
+hidepygame
 
 with open("config.yaml") as f:
     params = yaml.safe_load(f)

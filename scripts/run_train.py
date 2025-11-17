@@ -1,3 +1,4 @@
+import hidepygame
 import multiprocessing as mp
 import logging
 import yaml
@@ -9,6 +10,7 @@ from tqdm import tqdm
 from training.evaluador import Evaluador
 from datetime import datetime
 
+hidepygame
 
 # inicializador de cada hilo
 def worker_loop(in_q: mp.Queue, out_q: mp.Queue, params):

@@ -1,5 +1,4 @@
 import numpy as np
-import hidepygame
 import pygame
 from sim.entity import Entity
 

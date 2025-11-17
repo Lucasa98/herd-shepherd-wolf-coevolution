@@ -1,6 +1,5 @@
 from numba import jit
 import numpy as np
-import hidepygame
 import pygame
 from models.strombomSheep import StrombomSheep
 from models.followMouseShepherd import FollowMouseShepherd
