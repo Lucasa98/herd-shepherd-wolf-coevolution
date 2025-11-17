@@ -22,7 +22,9 @@ class Evaluador:
         shepherdModel = NNShepherdModel(self.params, self.rng, nn_model)
 
         self.world.restart(shepherdModel)
+        init_dist = self.world.distanciaCentroideObjetivo()
 
+        # ===== SIMULACION =====
         c = 0
         while (
             c < N_steps
@@ -37,8 +39,10 @@ class Evaluador:
         # (1) Cohesion: distancia de cada oveja al centroide
         cohesion_term = self.world.cohesionOvejas()
 
-        # (2) distancia del centroide al objetivo
-        to_goal_term = self.world.distanciaCentroideObjetivo()
+        # (2) progreso de la distancia inicial vs la distancia final al objetivo
+        to_goal_progress_term = max(
+            0.0, (init_dist - self.world.distanciaCentroideObjetivo()) / init_dist
+        )
 
         # (3) ovejas en el objetivo
         inside_term = self.world.ovejasDentroRate()  # already 0..1
@@ -51,24 +55,28 @@ class Evaluador:
 
         # ===== PESOS =====
         w_cohesion = 1
-        w_goal = 0.5
+        w_goal = 2.0
         w_inside = 1.0
         w_drive = 3.0
         w_finish = 0.0  # por ahora no nos interesa, "detiene" la evolucion de otras caracteristicas
 
         cohesion_term *= w_cohesion
-        to_goal_term *= w_goal
+        to_goal_progress_term *= w_goal
         inside_term *= w_inside
         driving_term *= w_drive
         finish_term *= w_finish
 
         fitness = (
-            cohesion_term + to_goal_term + inside_term + driving_term + finish_term
+            cohesion_term
+            + to_goal_progress_term
+            + inside_term
+            + driving_term
+            + finish_term
         )
 
         return fitness, {
             "cohesion": cohesion_term,
-            "to_goal": to_goal_term,
+            "to_goal": to_goal_progress_term,
             "inside": inside_term,
             "driving": driving_term,
             "finish": finish_term,

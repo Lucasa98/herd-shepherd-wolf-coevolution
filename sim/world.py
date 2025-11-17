@@ -18,6 +18,7 @@ class World:
         self.ticks_to_finish = None
         self.width = width
         self.height = height
+        self.diag = np.linalg.norm([self.width, self.height])
         self.entities = np.empty(
             self.params["N"] + self.params["N_pastores"], dtype=Entity
         )
@@ -233,64 +234,43 @@ class World:
 
     def cohesionOvejas(self):
         return self.cohesionOvejasStatic(
-            np.array([o.position for o in self.ovejas]),
-            self.params["w_w"],
-            self.params["w_h"],
+            np.array([o.position for o in self.ovejas]), self.diag
         )
 
     @staticmethod
     @jit(nopython=True)
-    def cohesionOvejasStatic(ovejasPos, w_w, w_h):
+    def cohesionOvejasStatic(ovejasPos, diag_long):
         n = ovejasPos.shape[0]
 
         # means
-        meanx = 0.0
-        meany = 0.0
+        mean = np.zeros(2, dtype=np.float64)
         for i in range(n):
-            meanx += ovejasPos[i, 0]
-            meany += ovejasPos[i, 1]
-        meanx /= n
-        meany /= n
+            mean += ovejasPos[i]
+        mean /= n
 
-        # sum de distancias al cuadrado
-        dist2 = 0.0
+        # sum de distancias
+        dist = 0.0
         for i in range(n):
-            dx = ovejasPos[i, 0] - meanx
-            dy = ovejasPos[i, 1] - meany
-            dist2 += dx * dx + dy * dy
+            dist += np.linalg.norm(mean - ovejasPos[i])
 
-        # normalize by diagonal squared
-        diag = w_w * w_w + w_h * w_h
-        v = dist2 / diag
-        if v > 1.0:
-            v = 1.0
-
-        return 1.0 - v
+        # promediar y normalizar por la diagonal
+        return 1.0 - min(dist / (diag_long * n), 1.0)
 
     def distanciaCentroideObjetivo(self):
         return self.distanciaCentroideObjetivoStatic(
-            np.array([o.position for o in self.ovejas]),
-            self.objetivo_c,
-            self.params["w_w"],
-            self.params["w_h"],
+            np.array([o.position for o in self.ovejas]), self.objetivo_c, self.diag
         )
 
     @staticmethod
     @jit(nopython=True)
-    def distanciaCentroideObjetivoStatic(ovejasPos, objetivo_c, w_w, w_h):
+    def distanciaCentroideObjetivoStatic(ovejasPos, objetivo_c, diag_long):
         n = ovejasPos.shape[0]
         # means
-        meanx = 0.0
-        meany = 0.0
+        mean = np.zeros(2, dtype=np.float64)
         for i in range(n):
-            meanx += ovejasPos[i, 0]
-            meany += ovejasPos[i, 1]
-        meanx /= n
-        meany /= n
+            mean += ovejasPos[i]
+        mean /= n
 
-        dx = meanx - objetivo_c[0]
-        dy = meany - objetivo_c[1]
-        flock_dist = dx * dx + dy * dy
+        flock_dist = np.linalg.norm(mean - objetivo_c)
         # normalizar por la diagonal
-        diag = w_w * w_w + w_h * w_h
-        return 1 - min(flock_dist / diag, 1.0)
+        return 1 - min(flock_dist / diag_long, 1.0)
