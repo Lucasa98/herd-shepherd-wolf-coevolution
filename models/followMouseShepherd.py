@@ -3,7 +3,6 @@ import pygame
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 
-
 class FollowMouseShepherd:
     def __init__(self, params, rng):
         self.rng = rng
@@ -17,23 +16,21 @@ class FollowMouseShepherd:
         objetivo_c,
     ):
         p = self.params
-        mouse_pos = pygame.mouse.get_pos()
+        mx, my = pygame.mouse.get_pos()
 
-        # Limitar el mouse al área del mundo (sin incluir la interfaz)
-        world_width = p["w_w"]
-        world_height = p["w_h"]
+        sx = p.get("world_scale_x", 1.0)
+        sy = p.get("world_scale_y", 1.0)
 
-        # Si el mouse está fuera del área del mundo, lo limitamos a los bordes
-        mx = max(0, min(mouse_pos[0], world_width))
-        my = max(0, min(mouse_pos[1], world_height))
+        ox = p.get("world_offset_x", 0.0)
+        oy = p.get("world_offset_y", 0.0)
 
-        mouse_pos = [mx, my]
+        mx = (mx - ox) / max(sx, 1e-8)
+        my = (my - oy) / max(sy, 1e-8)
 
-        # Escalar al tamaño real del mundo (ya no depende de disp_size)
-        mouse_pos = [
-            mouse_pos[0] * (p["w_w"] / world_width),
-            mouse_pos[1] * (p["w_h"] / world_height),
-        ]
+        mx = max(0.0, min(mx, p["w_w"]))
+        my = max(0.0, min(my, p["w_h"]))
+
+        mouse_pos = np.array([mx, my], dtype=float)
 
         H_new = p["h"] * shepherd.heading + (mouse_pos - shepherd.position)
         H_new /= np.linalg.norm(H_new) + 1e-8

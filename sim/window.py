@@ -4,7 +4,6 @@ from sim.world import World
 from sim.interface import Interface
 from numpy.random import default_rng
 
-
 class Window:
     def __init__(self, params):
         self.params = params
@@ -12,7 +11,6 @@ class Window:
 
         pygame.init()
 
-        # ventana horizontal: mundo a la izquierda, interfaz a la derecha
         self.interface_width = 250
         self.screen_width = params["w_w"] + self.interface_width
         self.screen_height = params["w_h"]
@@ -24,6 +22,11 @@ class Window:
         self.world_surface = pygame.Surface((params["w_w"], params["w_h"]))
         self.world = World(params["w_w"], params["w_h"], params, self.rng)
         self.interface = Interface()
+
+        self.params["world_scale_x"] = 1.0
+        self.params["world_scale_y"] = 1.0
+        self.params["world_offset_x"] = 0.0
+        self.params["world_offset_y"] = 0.0
 
         self.clock = pygame.time.Clock()
         self.running = True
@@ -47,7 +50,6 @@ class Window:
 
         screen_w, screen_h = self.screen.get_size()
 
-        # calcular escala para que el mundo mantenga proporción
         available_w = screen_w - self.interface_width
         available_h = screen_h
         scale_factor = min(
@@ -56,25 +58,38 @@ class Window:
 
         scaled_w = int(self.params["w_w"] * scale_factor)
         scaled_h = int(self.params["w_h"] * scale_factor)
+
         scaled_world = pygame.transform.smoothscale(
             self.world_surface, (scaled_w, scaled_h)
         )
 
-        # limpiar pantalla
         self.screen.fill((0, 0, 0))
 
-        # dibujar mundo a la izquierda, centrado verticalmente
         world_x = 0
         world_y = (screen_h - scaled_h) // 2
+
+        self.params["world_scale_x"] = scaled_w / self.params["w_w"]
+        self.params["world_scale_y"] = scaled_h / self.params["w_h"]
+        self.params["world_offset_x"] = float(world_x)
+        self.params["world_offset_y"] = float(world_y)
+
         self.screen.blit(scaled_world, (world_x, world_y))
 
-        # dibujar interfaz a la derecha
-        interface_surface = pygame.Surface((self.interface_width, scaled_h))
-        interface_surface.fill((0, 0, 0))
-        self.interface.draw(interface_surface, self.world)
-        interface_x = available_w
+        base_interface = pygame.Surface((self.interface_width, self.params["w_h"]))
+        base_interface.fill((0, 0, 0))
+        self.world._surface = self.world_surface
+        self.interface.draw(base_interface, self.world)
+
+        scaled_interface_w = int(self.interface_width * self.params["world_scale_x"])
+        scaled_interface_h = int(self.params["w_h"] * self.params["world_scale_y"])
+
+        scaled_interface = pygame.transform.smoothscale(
+            base_interface, (scaled_interface_w, scaled_interface_h)
+        )
+
+        interface_x = scaled_w
         interface_y = world_y
-        self.screen.blit(interface_surface, (interface_x, interface_y))
+        self.screen.blit(scaled_interface, (interface_x, interface_y))
 
         pygame.display.flip()
         self.clock.tick(60)
