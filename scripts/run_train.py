@@ -12,6 +12,7 @@ from datetime import datetime
 
 hidepygame
 
+
 # inicializador de cada hilo
 def worker_loop(in_q: mp.Queue, out_q: mp.Queue, params):
     local_rng: np.random.Generator = np.random.default_rng()

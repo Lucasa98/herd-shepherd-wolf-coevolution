@@ -27,7 +27,11 @@ class Shepherd(Entity):
             objetivo_c,
         )
 
-        if self.prev_pos is not None and np.dot(self.prev_pos - self.position, self.prev_pos - self.position) < 0.5:
+        if (
+            self.prev_pos is not None
+            and np.dot(self.prev_pos - self.position, self.prev_pos - self.position)
+            < 0.5
+        ):
             self.count_pos_repetida += 1
         else:
             self.count_pos_repetida = 0

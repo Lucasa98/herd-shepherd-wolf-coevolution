@@ -3,6 +3,7 @@ import pygame
 from sim.sheep import Sheep
 from sim.shepherd import Shepherd
 
+
 class FollowMouseShepherd:
     def __init__(self, params, rng):
         self.rng = rng

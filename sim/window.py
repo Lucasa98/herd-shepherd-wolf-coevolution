@@ -4,6 +4,7 @@ from sim.world import World
 from sim.interface import Interface
 from numpy.random import default_rng
 
+
 class Window:
     def __init__(self, params):
         self.params = params
