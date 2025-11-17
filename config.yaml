@@ -28,9 +28,9 @@ hidden_lay_1: 128  # neuronas de la primer capa oculta
 hidden_lay_2: 64  # neuronas de la segunda capa oculta
 # ENTRENAMIENTO
 max_steps_ini: 500  # numero maximo de pasos por simulacion (inicial)
-max_steps: 500  # numero maximo de pasos por simulacion (final)
-poblacion: 100  # individuos por poblacion
-generaciones: 100  # generaciones
-progenitores: 10  # progenitores por generacion
+max_steps: 800  # numero maximo de pasos por simulacion (final)
+poblacion: 500  # individuos por poblacion
+generaciones: 5000  # generaciones
+progenitores: 50  # progenitores por generacion
 mutacion: 0.05  # probabilidad de mutacion
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping
