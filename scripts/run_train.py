@@ -65,6 +65,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     B = params["brecha_generacional"]
     N = params["poblacion"]
     P = params["progenitores"]
+    G = params["generaciones"]
     n_bits = params["n_bits"]
     M = params["mutacion"]
     C = N - (E + B)  # numero de hijos a generar
@@ -86,13 +87,13 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     logger.info("workers inicializados ...")
 
     # ======================= EVOLUCION =======================
+    fit_history = np.empty((G+1, 2), dtype=np.float64)
 
     logger.info("inicializando poblacion ...")
     # 1) inicializar la poblacion al azar
     poblacion = rng.integers(
-        0, 2, (N, params["n_bits"]), dtype=np.uint8
+        0, 2, (N, n_bits), dtype=np.uint8
     )
-    fit_history = np.empty((0, 2), dtype=float)
     logger.info("poblacion inicializada ...")
 
     # 2) calcular fitness
@@ -103,8 +104,11 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     fit, fit_detail = evaluar_poblacion(poblacion, N_steps, in_q, out_q)
     sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
 
+    # logear fitness
+    fit_history[0,0] = np.mean(fit)  # promedio
+    fit_history[0,1] = fit[sorted[-1]]  # mejor
+
     fit_elite = fit[sorted[-1]]
-    fit_history = np.vstack([fit_history, [0, fit_elite]])
     logger.info(
         "primer fitness: %.5f, %s",
         fit_elite,
@@ -113,7 +117,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     logger.info("iniciando evolucion")
     t_ini = time.perf_counter()
-    for g in tqdm(range(P)):
+    for g in tqdm(range(G)):
         try:
             # 1) elegir progenitores: un elite y el resto por ventana
             progenitores = np.empty(
@@ -169,6 +173,11 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
                 poblacion, int(np.floor(N_steps)), in_q, out_q
             )
             sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
+
+            # logear fitness
+            fit_history[g+1,0] = np.mean(fit)  # promedio
+            fit_history[g+1,1] = fit[sorted[-1]]  # mejor
+
             if fit[sorted[-1]] > fit_elite:
                 logger.info(
                     f"generacion {g+1} - fitness superado: %.5f, %s",
@@ -176,7 +185,6 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
                     {k: f"{v:.5f}" for k, v in fit_detail[sorted[-1]].items()},
                 )
                 fit_elite = fit[sorted[-1]]
-                fit_history = np.vstack([fit_history, [g + 1, fit_elite]])
         except KeyboardInterrupt:
             logger.info(f"evolucion interrumpida en generacion {g}")
             break
@@ -194,8 +202,6 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         w.join()
 
     print(f"Best fitness: {fit_elite}")
-    print("fit history:")
-    print(fit_history)
 
     logger.info("guardando modelo de mejor individuo")
     best_genome = poblacion[sorted[-1]]
@@ -203,6 +209,9 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     os.makedirs(save_dir, exist_ok=True)
 
     np.save(os.path.join(save_dir, f"{timestamp}-model.npy"), best_genome)
+
+    # guardar fit_history
+    np.save(os.path.join(save_dir, f"{timestamp}-history.npy"), fit_history)
 
     with open(os.path.join(save_dir, f"{timestamp}-config.json"), "w") as f:
         json.dump(params, f, indent=2)
