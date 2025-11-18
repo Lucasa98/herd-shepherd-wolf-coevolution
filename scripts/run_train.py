@@ -122,7 +122,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
             v = ventana
             for i in range(P):
-                progenitores[i] = poblacion[sorted[-rng.integers(0, v, 1)]]
+                k = rng.integers(0, v)
+                progenitores[i] = poblacion[sorted[-k]]
                 v += ventana
 
             # 2) reemplazo
@@ -156,9 +157,12 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             # mutar a nivel de gen
             if N_mut > 0:
                 # Tomar indices aleatorios y flipear esos bits
-                idx = rng.integers(0, total_bits_children, N_mut, dtype=np.int64)
                 flat = new_poblacion[E + B : N].reshape(-1)
+                idx = rng.integers(0, flat.size, N_mut, dtype=np.int64)
                 flat[idx] ^= 1
+
+            # nueva generacion
+            poblacion = new_poblacion
 
             # ovejas y ticks para esta generacion
             N_steps += steps_rate
