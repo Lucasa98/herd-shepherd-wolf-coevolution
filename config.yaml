@@ -36,6 +36,7 @@ progenitores: 10  # progenitores por generacion
 brecha_generacional: 5  # progenitores que pasan a la siguiente generacion
 
 # FITNESS
+redundancia: 1  # numero de veces que se REPITE la simulacion para promediar
 max_steps_ini: 500  # numero maximo de pasos por simulacion (inicial)
 max_steps: 800  # numero maximo de pasos por simulacion (final)
 w_cohesion: 1  # peso de cohesion en fitness
