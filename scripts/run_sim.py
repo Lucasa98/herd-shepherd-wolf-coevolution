@@ -12,7 +12,7 @@ with open("config.yaml") as f:
 # ==== Selección de modelo ==========
 trained_dir = "models/trained"
 trained_models = (
-    sorted([f for f in os.listdir(trained_dir) if f.endswith(".npy")])
+    sorted([f for f in os.listdir(trained_dir) if f.endswith("model.npy")])
     if os.path.exists(trained_dir)
     else []
 )
