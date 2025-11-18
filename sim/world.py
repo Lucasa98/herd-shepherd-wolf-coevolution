@@ -22,6 +22,7 @@ class World:
         self.entities = np.empty(
             self.params["N"] + self.params["N_pastores"], dtype=Entity
         )
+        self.ticks_driving = 0
 
         # ===== Ovejas =====
         sheepModel = StrombomSheep(params, rng)
@@ -54,6 +55,7 @@ class World:
     def restart(self, shepherdModel):
         self.ticks = 0
         self.ticks_to_finish = None
+        self.ticks_driving = 0
 
         # ===== Ovejas =====
         # solo reubicamos
@@ -101,9 +103,10 @@ class World:
         )
         self.ovejas = np.array(
             [
-                Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model=model)
+                Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model)
                 for i in range(N)
-            ]
+            ],
+            dtype=Sheep
         )
         self.entities[:N] = self.ovejas
 
@@ -114,9 +117,9 @@ class World:
         rand_positions = self.rng.uniform(0, 1, size=(N, 2))
         rand_positions[:, 0] = rand_positions[:, 0] * self.width
         rand_positions[:, 1] = rand_positions[:, 1] * self.height
-        heading = np.array([1.0, 0.0], dtype=float)
         self.pastores = np.array(
-            [Shepherd(rand_positions[i], heading, model) for i in range(N)]
+            [Shepherd(rand_positions[i], np.array([1.0, 0.0], dtype=float), model) for i in range(N)],
+            dtype=Shepherd
         )
         self.entities[self.params["N"] :] = self.pastores
 
@@ -139,10 +142,15 @@ class World:
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):
+        distanciaCentroidePrev = self.distanciaCentroideObjetivo()
+
         for e in self.entities:
             e.update(self.ovejas, self.pastores, self.objetivo_c)
 
         self.ticks += 1
+
+        if np.array([p.prev_driving for p in self.pastores]).any() and self.distanciaCentroideObjetivo() - distanciaCentroidePrev:
+            self.ticks_driving += 1
 
         if (self.ticks_to_finish is None) and self.shepherd_finished():
             self.ticks_to_finish = self.ticks
@@ -209,12 +217,12 @@ class World:
         return c / N
 
     def drivingRate(self):
-        """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor)"""
-        c = np.float64(0.0)
-        for p in self.pastores:
-            c += p.count_pastoreando
-
-        return c / self.ticks
+        """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor) TODO: ...hacia el objetivo"""
+        #c = np.float64(0.0)
+        #for p in self.pastores:
+        #    c += p.count_pastoreando
+        #return c / self.ticks
+        return self.ticks_driving / self.ticks
 
     def distanciaPromedio(self):
         """Distancia promedio de las ovejas al objetivo"""

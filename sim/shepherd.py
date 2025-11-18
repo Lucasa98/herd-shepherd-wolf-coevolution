@@ -14,9 +14,8 @@ class Shepherd(Entity):
         self.count_pos_repetida = 0
 
     def update(self, sheeps, shepherds, objetivo_c):
-        if self.driving:
-            self.count_pastoreando += 1
-            self.driving = False
+        self.prev_driving = bool(self.driving)
+        self.driving = False
 
         self.model.update(
             self,

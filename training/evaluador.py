@@ -53,12 +53,45 @@ class Evaluador:
         # (5) Si completa, bonus
         finish_term = 1.0 if self.world.ticks_to_finish is not None else 0.0
 
+        # ===== FITNESS 2 =====
+        self.world.restart(shepherdModel)
+        init_dist = self.world.distanciaCentroideObjetivo()
+
+        # ===== SIMULACION 2 =====
+        c = 0
+        while (
+            c < N_steps
+            and self.world.ticks_to_finish is None
+            and not self.world.repitePosiciones()
+        ):
+            self.world.update()
+            c += 1
+
+        # ===== TERMINOS DEL FITNESS =====
+
+        # (1) Cohesion: distancia de cada oveja al centroide
+        cohesion_term += self.world.cohesionOvejas()
+
+        # (2) progreso de la distancia inicial vs la distancia final al objetivo
+        to_goal_progress_term += max(
+            0.0, (init_dist - self.world.distanciaCentroideObjetivo()) / init_dist
+        )
+
+        # (3) ovejas en el objetivo
+        inside_term += self.world.ovejasDentroRate()  # already 0..1
+
+        # (4) driving (0..1 scaled)
+        driving_term += self.world.drivingRate()
+
+        # (5) Si completa, bonus
+        finish_term += 1.0 if self.world.ticks_to_finish is not None else 0.0
+
         # ===== PESOS =====
-        w_cohesion = 1
-        w_goal = 2.0
-        w_inside = 1.0
-        w_drive = 3.0
-        w_finish = 0.0  # por ahora no nos interesa, "detiene" la evolucion de otras caracteristicas
+        w_cohesion = self.params["w_cohesion"]
+        w_goal = self.params["w_goal"]
+        w_inside = self.params["w_inside"]
+        w_drive = self.params["w_drive"]
+        w_finish = self.params["w_finish"]
 
         cohesion_term *= w_cohesion
         to_goal_progress_term *= w_goal
