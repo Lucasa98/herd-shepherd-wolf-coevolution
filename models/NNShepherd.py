@@ -76,7 +76,7 @@ class NNShepherdModel:
         shepherdPosition: np.ndarray[np.float64],
         sheeps: np.ndarray[np.float64],
         pers_ovejas: int,
-        diag
+        diag,
     ):
         # NEAREST OVEJAS
         n_sheeps = sheeps.shape[0]
@@ -109,7 +109,7 @@ class NNShepherdModel:
         shepherds: np.ndarray[np.float64],
         shepherdPosition: np.ndarray[np.float64],
         pers_pastores: int,
-        diag
+        diag,
     ):
         # NEAREST PASTORES
         n_shepherds = shepherds.shape[0]
