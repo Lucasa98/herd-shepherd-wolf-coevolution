@@ -60,6 +60,17 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
         + (params["hidden_lay_2"] * 2 + 2)
     )
 
+    # parametros de evolucion
+    E = params["elite"]
+    B = params["brecha_generacional"]
+    N = params["poblacion"]
+    P = params["progenitores"]
+    n_bits = params["n_bits"]
+    M = params["mutacion"]
+    C = N - (E + B)  # numero de hijos a generar
+    total_bits_children = C * n_bits  # total de bits entre hijos
+    N_mut = int(M * total_bits_children)  # total de bits a mutar
+
     rng: np.random.Generator = np.random.default_rng()
 
     logger.info("iniciando workers ...")
@@ -79,7 +90,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     logger.info("inicializando poblacion ...")
     # 1) inicializar la poblacion al azar
     poblacion = rng.integers(
-        0, 2, (params["poblacion"], params["n_bits"]), dtype=np.uint8
+        0, 2, (N, params["n_bits"]), dtype=np.uint8
     )
     fit_history = np.empty((0, 2), dtype=float)
     logger.info("poblacion inicializada ...")
@@ -102,40 +113,53 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
 
     logger.info("iniciando evolucion")
     t_ini = time.perf_counter()
-    for g in tqdm(range(params["generaciones"])):
+    for g in tqdm(range(P)):
         try:
             # 1) elegir progenitores: un elite y el resto por ventana
             progenitores = np.empty(
-                (params["progenitores"], params["n_bits"]), dtype=np.uint8
+                (P, n_bits), dtype=np.uint8
             )
-            progenitores[0] = poblacion[sorted[-1]]  # elite
 
             v = ventana
-            for i in range(1, params["progenitores"]):
+            for i in range(P):
                 progenitores[i] = poblacion[sorted[-rng.integers(0, v, 1)]]
                 v += ventana
 
-            # 2) cruzar progenitores (cruza simple)
-            poblacion[: params["progenitores"]] = progenitores
-            for i in range(params["progenitores"], params["poblacion"]):
+            # 2) reemplazo
+            new_poblacion = poblacion.copy()
+
+            # elite
+            if E == 1:
+                new_poblacion[0] = poblacion[sorted[-1]]
+
+            # "supervivientes" (elite + brecha generacional)
+            new_poblacion[E:E+B] = progenitores[:B]
+
+            # hijos (cruza)
+            i = E + B
+            while i < N:
                 p1, p2 = rng.integers(
-                    0, params["progenitores"], 2
+                    0, P, 2
                 )  # tomar progenitores al azar
 
                 # punto de cruza: elegir inicio y fin del segmento a cruzar
-                c1, c2 = np.sort(rng.integers(0, params["n_bits"], 2))
+                c1, c2 = np.sort(rng.integers(0, n_bits, 2))
 
-                # cruzar: segmento del padre 1 y el resto del padre 2
-                poblacion[i, :c1] = progenitores[p2, :c1]  # antes de c1
-                poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
-                poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
+                # cruzar generando dos individuos a la vez
+                new_poblacion[i, :c1] = progenitores[p2, :c1]  # antes de c1
+                new_poblacion[i, c1:c2] = progenitores[p1, c1:c2]  # c1 a c2
+                new_poblacion[i, c2:] = progenitores[p2, c2:]  # de c2 al final
+                i += 1
+                if i < N:
+                    new_poblacion[i, :c1] = progenitores[p1, :c1]  # antes de c1
+                    new_poblacion[i, c1:c2] = progenitores[p2, c1:c2]  # c1 a c2
+                    new_poblacion[i, c2:] = progenitores[p1, c2:]  # de c2 al final
 
             # mutar a nivel de gen
-            N_mut = int(params["mutacion"] * params["poblacion"] * params["n_bits"])
             if N_mut > 0:
                 # Tomar indices aleatorios y flipear esos bits
-                idx = rng.integers(0, poblacion.size, N_mut, dtype=np.int64)
-                flat = poblacion.reshape(-1)
+                idx = rng.integers(0, total_bits_children, N_mut, dtype=np.int64)
+                flat = new_poblacion[E+B:N].reshape(-1)
                 flat[idx] ^= 1
 
             # ovejas y ticks para esta generacion
