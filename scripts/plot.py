@@ -20,8 +20,8 @@ choice = int(input("> "))
 base_name = trained_models[choice - 1]
 history_path = os.path.join(trained_dir, base_name)
 fit_history = np.load(history_path)
-avg = fit_history[:,0]
-mejor = fit_history[:,1]
+avg = fit_history[:, 0]
+mejor = fit_history[:, 1]
 
 plt.grid()
 plt.plot(avg, label="avg")

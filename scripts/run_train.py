@@ -87,13 +87,11 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     logger.info("workers inicializados ...")
 
     # ======================= EVOLUCION =======================
-    fit_history = np.empty((G+1, 2), dtype=np.float64)
+    fit_history = np.empty((G + 1, 2), dtype=np.float64)
 
     logger.info("inicializando poblacion ...")
     # 1) inicializar la poblacion al azar
-    poblacion = rng.integers(
-        0, 2, (N, n_bits), dtype=np.uint8
-    )
+    poblacion = rng.integers(0, 2, (N, n_bits), dtype=np.uint8)
     logger.info("poblacion inicializada ...")
 
     # 2) calcular fitness
@@ -105,8 +103,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
 
     # logear fitness
-    fit_history[0,0] = np.mean(fit)  # promedio
-    fit_history[0,1] = fit[sorted[-1]]  # mejor
+    fit_history[0, 0] = np.mean(fit)  # promedio
+    fit_history[0, 1] = fit[sorted[-1]]  # mejor
 
     fit_elite = fit[sorted[-1]]
     logger.info(
@@ -120,9 +118,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
     for g in tqdm(range(G)):
         try:
             # 1) elegir progenitores: un elite y el resto por ventana
-            progenitores = np.empty(
-                (P, n_bits), dtype=np.uint8
-            )
+            progenitores = np.empty((P, n_bits), dtype=np.uint8)
 
             v = ventana
             for i in range(P):
@@ -137,14 +133,12 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
                 new_poblacion[0] = poblacion[sorted[-1]]
 
             # "supervivientes" (elite + brecha generacional)
-            new_poblacion[E:E+B] = progenitores[:B]
+            new_poblacion[E : E + B] = progenitores[:B]
 
             # hijos (cruza)
             i = E + B
             while i < N:
-                p1, p2 = rng.integers(
-                    0, P, 2
-                )  # tomar progenitores al azar
+                p1, p2 = rng.integers(0, P, 2)  # tomar progenitores al azar
 
                 # punto de cruza: elegir inicio y fin del segmento a cruzar
                 c1, c2 = np.sort(rng.integers(0, n_bits, 2))
@@ -163,7 +157,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             if N_mut > 0:
                 # Tomar indices aleatorios y flipear esos bits
                 idx = rng.integers(0, total_bits_children, N_mut, dtype=np.int64)
-                flat = new_poblacion[E+B:N].reshape(-1)
+                flat = new_poblacion[E + B : N].reshape(-1)
                 flat[idx] ^= 1
 
             # ovejas y ticks para esta generacion
@@ -175,8 +169,8 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
             sorted = np.argsort(fit)  # indices que ordenan de menor a mayor
 
             # logear fitness
-            fit_history[g+1,0] = np.mean(fit)  # promedio
-            fit_history[g+1,1] = fit[sorted[-1]]  # mejor
+            fit_history[g + 1, 0] = np.mean(fit)  # promedio
+            fit_history[g + 1, 1] = fit[sorted[-1]]  # mejor
 
             if fit[sorted[-1]] > fit_elite:
                 logger.info(

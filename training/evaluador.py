@@ -67,11 +67,11 @@ class Evaluador:
             # (5) Si completa, bonus
             finish_term += 1.0 if self.world.ticks_to_finish is not None else 0.0
 
-        cohesion_term *= self.w_cohesion / (self.redundancia+1)
-        to_goal_progress_term *= self.w_goal / (self.redundancia+1)
-        inside_term *= self.w_inside / (self.redundancia+1)
-        driving_term *= self.w_drive / (self.redundancia+1)
-        finish_term *= self.w_finish / (self.redundancia+1)
+        cohesion_term *= self.w_cohesion / (self.redundancia + 1)
+        to_goal_progress_term *= self.w_goal / (self.redundancia + 1)
+        inside_term *= self.w_inside / (self.redundancia + 1)
+        driving_term *= self.w_drive / (self.redundancia + 1)
+        finish_term *= self.w_finish / (self.redundancia + 1)
 
         fitness = (
             cohesion_term

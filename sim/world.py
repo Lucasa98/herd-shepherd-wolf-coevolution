@@ -106,7 +106,7 @@ class World:
                 Sheep(rand_positions[i], np.array([1.0, 0.0], dtype=float), model)
                 for i in range(N)
             ],
-            dtype=Sheep
+            dtype=Sheep,
         )
         self.entities[:N] = self.ovejas
 
@@ -118,8 +118,11 @@ class World:
         rand_positions[:, 0] = rand_positions[:, 0] * self.width
         rand_positions[:, 1] = rand_positions[:, 1] * self.height
         self.pastores = np.array(
-            [Shepherd(rand_positions[i], np.array([1.0, 0.0], dtype=float), model) for i in range(N)],
-            dtype=Shepherd
+            [
+                Shepherd(rand_positions[i], np.array([1.0, 0.0], dtype=float), model)
+                for i in range(N)
+            ],
+            dtype=Shepherd,
         )
         self.entities[self.params["N"] :] = self.pastores
 
@@ -149,7 +152,10 @@ class World:
 
         self.ticks += 1
 
-        if np.array([p.prev_driving for p in self.pastores]).any() and self.distanciaCentroideObjetivo() - distanciaCentroidePrev:
+        if (
+            np.array([p.prev_driving for p in self.pastores]).any()
+            and self.distanciaCentroideObjetivo() - distanciaCentroidePrev
+        ):
             self.ticks_driving += 1
 
         if (self.ticks_to_finish is None) and self.shepherd_finished():
@@ -218,10 +224,10 @@ class World:
 
     def drivingRate(self):
         """Ratio de ticks en que los pastores guiaron ovejas ([0,1] por pastor) TODO: ...hacia el objetivo"""
-        #c = np.float64(0.0)
-        #for p in self.pastores:
+        # c = np.float64(0.0)
+        # for p in self.pastores:
         #    c += p.count_pastoreando
-        #return c / self.ticks
+        # return c / self.ticks
         return self.ticks_driving / self.ticks
 
     def distanciaPromedio(self):
