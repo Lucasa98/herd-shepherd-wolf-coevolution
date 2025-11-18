@@ -17,6 +17,8 @@ class NNShepherdModel:
         sheeps: np.ndarray[np.float64],
         shepherds: np.ndarray[np.float64],
         objetivo_c: np.ndarray[np.float64],
+        centroide: np.ndarray[np.float64],
+        diag,
     ):
         """
         Actualiza la posición del pastor según la salida de la red neuronal
@@ -26,41 +28,40 @@ class NNShepherdModel:
             shepherdPosition=shepherd.position,
             sheeps=sheeps,
             pers_ovejas=self.params["pers_ovejas"],
+            diag=diag,
         )
 
         pastores_pos = self.pastoresPos(
             shepherds=shepherds,
             shepherdPosition=shepherd.position,
             pers_pastores=self.params["pers_pastores"],
+            diag=diag,
         )
 
-        rel_objetivo = objetivo_c - shepherd.position
+        centroide_pos = self.centroidePos(
+            shepherdPosition=shepherd.position,
+            centroide=centroide,
+            diag=diag,
+        )
+
+        objetivo_pos = self.objetivoPos(
+            shepherdPosition=shepherd.position,
+            objetivo=objetivo_c,
+            diag=diag,
+        )
 
         # Concatenar: dirección actual + pos rel a vecinos + por rel a ovejas + pos rel a objetivo
         inputs = np.concatenate(
             [
-                shepherd.heading,
+                centroide_pos.ravel(),
                 pastores_pos.ravel(),
                 ovejas_pos.ravel(),
-                rel_objetivo.ravel(),
+                objetivo_pos.ravel(),
             ]
         )
 
-        # NORMALIZAR INPUTS
-        # ENTORNO
-        w = float(self.params["w_w"])
-        h = float(self.params["w_h"])
-        max_dim = max(w, h)
-        coords = inputs.reshape(-1, 2) if inputs.size % 2 == 0 else None
-        if coords is not None:
-            coords[:, 0] = coords[:, 0] / w
-            coords[:, 1] = coords[:, 1] / h
-            inputs_norm = np.clip(coords.ravel(), -1.0, 1.0)
-        else:
-            inputs_norm = np.clip(inputs / max_dim, -1.0, 1.0)
-
         # FORWARD PASS
-        inputs_tensor = torch.tensor(inputs_norm, dtype=torch.float32).unsqueeze(0)
+        inputs_tensor = torch.tensor(inputs, dtype=torch.float32).unsqueeze(0)
         out = self.nn(inputs_tensor).detach().numpy().squeeze()
 
         # MOVER PASTOR
@@ -75,6 +76,7 @@ class NNShepherdModel:
         shepherdPosition: np.ndarray[np.float64],
         sheeps: np.ndarray[np.float64],
         pers_ovejas: int,
+        diag
     ):
         # NEAREST OVEJAS
         n_sheeps = sheeps.shape[0]
@@ -96,8 +98,8 @@ class NNShepherdModel:
                 sheepsDists[mejor] = np.inf
             ovejas_pos = np.empty((pers_ovejas, 2), dtype=np.float64)
             for i in range(pers_ovejas):
-                ovejas_pos[i, 0] = relative_to_sheeps[cercanas_idx[i], 0]
-                ovejas_pos[i, 1] = relative_to_sheeps[cercanas_idx[i], 1]
+                ovejas_pos[i, 0] = relative_to_sheeps[cercanas_idx[i], 0] / diag
+                ovejas_pos[i, 1] = relative_to_sheeps[cercanas_idx[i], 1] / diag
 
         return ovejas_pos
 
@@ -107,6 +109,7 @@ class NNShepherdModel:
         shepherds: np.ndarray[np.float64],
         shepherdPosition: np.ndarray[np.float64],
         pers_pastores: int,
+        diag
     ):
         # NEAREST PASTORES
         n_shepherds = shepherds.shape[0]
@@ -129,10 +132,28 @@ class NNShepherdModel:
                 shepherdsDists[mejor] = np.inf
             pastores_pos = np.empty((pers_pastores, 2), dtype=np.float64)
             for i in range(pers_pastores):
-                pastores_pos[i, 0] = relative_to_shepherds[cercanos_idx[i], 0]
-                pastores_pos[i, 1] = relative_to_shepherds[cercanos_idx[i], 1]
+                pastores_pos[i, 0] = relative_to_shepherds[cercanos_idx[i], 0] / diag
+                pastores_pos[i, 1] = relative_to_shepherds[cercanos_idx[i], 1] / diag
 
         return pastores_pos
+
+    @staticmethod
+    @jit(nopython=True)
+    def centroidePos(
+        shepherdPosition: np.ndarray[np.float64],
+        centroide: np.ndarray[np.float64],
+        diag,
+    ):
+        return (shepherdPosition - centroide) / diag
+
+    @staticmethod
+    @jit(nopython=True)
+    def objetivoPos(
+        shepherdPosition: np.ndarray[np.float64],
+        objetivo: np.ndarray[np.float64],
+        diag,
+    ):
+        return (shepherdPosition - objetivo) / diag
 
 
 class ShepherdNN(nn.Module):

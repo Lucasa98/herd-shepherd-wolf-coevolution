@@ -145,16 +145,17 @@ class World:
         self.objetivo_r = self.params["obj_r"]
 
     def update(self):
-        distanciaCentroidePrev = self.distanciaCentroideObjetivo()
+        centroide, distanciaCentroidePrev = self.cetroideYDistanciaCentroideObjetivo()
 
         for e in self.entities:
-            e.update(self.ovejas, self.pastores, self.objetivo_c)
+            e.update(self.ovejas, self.pastores, self.objetivo_c, centroide, self.diag)
 
         self.ticks += 1
 
+        _, distCentroide = self.cetroideYDistanciaCentroideObjetivo()
         if (
             np.array([p.prev_driving for p in self.pastores]).any()
-            and self.distanciaCentroideObjetivo() - distanciaCentroidePrev
+            and distCentroide < distanciaCentroidePrev
         ):
             self.ticks_driving += 1
 
@@ -270,14 +271,14 @@ class World:
         # promediar y normalizar por la diagonal
         return 1.0 - min(dist / (diag_long * n), 1.0)
 
-    def distanciaCentroideObjetivo(self):
-        return self.distanciaCentroideObjetivoStatic(
+    def cetroideYDistanciaCentroideObjetivo(self):
+        return self.cetroideYDistanciaCentroideObjetivoStatic(
             np.array([o.position for o in self.ovejas]), self.objetivo_c, self.diag
         )
 
     @staticmethod
     @jit(nopython=True)
-    def distanciaCentroideObjetivoStatic(ovejasPos, objetivo_c, diag_long):
+    def cetroideYDistanciaCentroideObjetivoStatic(ovejasPos, objetivo_c, diag_long):
         n = ovejasPos.shape[0]
         # means
         mean = np.zeros(2, dtype=np.float64)
@@ -287,4 +288,4 @@ class World:
 
         flock_dist = np.linalg.norm(mean - objetivo_c)
         # normalizar por la diagonal
-        return 1 - min(flock_dist / diag_long, 1.0)
+        return mean, 1 - min(flock_dist / diag_long, 1.0)

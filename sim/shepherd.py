@@ -13,7 +13,7 @@ class Shepherd(Entity):
         self.prev_pos = None
         self.count_pos_repetida = 0
 
-    def update(self, sheeps, shepherds, objetivo_c):
+    def update(self, sheeps, shepherds, objetivo_c, centroide, diag):
         self.prev_driving = bool(self.driving)
         self.driving = False
 
@@ -24,6 +24,8 @@ class Shepherd(Entity):
                 [s.position for s in shepherds if s is not self], dtype=np.float64
             ).reshape(-1, 2),
             objetivo_c,
+            centroide,
+            diag,
         )
 
         if (

@@ -10,7 +10,7 @@ class Sheep(Entity):
         self.model = model
         self.pastoreada = False
 
-    def update(self, sheeps, shepherds, objetivo_c):
+    def update(self, sheeps, shepherds, objetivo_c, centroide, diag):
         # delegar el comportamiento al modelo
         self.model.update(
             self,

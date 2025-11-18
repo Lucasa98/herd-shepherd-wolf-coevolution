@@ -15,6 +15,7 @@ class FollowMouseShepherd:
         sheeps: list[Sheep],
         shepherds: list[Shepherd],
         objetivo_c,
+        centroide,
     ):
         p = self.params
         mx, my = pygame.mouse.get_pos()

@@ -37,7 +37,7 @@ class Evaluador:
         for i in range(self.redundancia + 1):
             # ===== SIMULACION =====
             self.world.restart(shepherdModel)
-            init_dist = self.world.distanciaCentroideObjetivo()
+            _, init_dist = self.world.cetroideYDistanciaCentroideObjetivo()
 
             c = 0
             while (
@@ -54,8 +54,9 @@ class Evaluador:
             cohesion_term += self.world.cohesionOvejas()
 
             # (2) progreso de la distancia inicial vs la distancia final al objetivo
+            _, dist = self.world.cetroideYDistanciaCentroideObjetivo()
             to_goal_progress_term += max(
-                0.0, (init_dist - self.world.distanciaCentroideObjetivo()) / init_dist
+                0.0, (init_dist - dist) / init_dist
             )
 
             # (3) ovejas en el objetivo
