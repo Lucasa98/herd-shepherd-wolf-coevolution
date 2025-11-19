@@ -50,7 +50,7 @@ class NNShepherdModel:
             diag=diag,
         )
 
-        # Concatenar: dirección actual + pos rel a vecinos + por rel a ovejas + pos rel a objetivo
+        # Concatenar: pos rel a centroide + pos rel a vecinos + por rel a ovejas + pos rel a objetivo
         inputs = np.concatenate(
             [
                 centroide_pos.ravel(),
@@ -86,7 +86,7 @@ class NNShepherdModel:
             sheepsDists = np.empty(n_sheeps, dtype=np.float64)
             for i in range(n_sheeps):
                 sheepsDists[i] = (
-                    sheeps[i, 0] * sheeps[i, 0] + sheeps[i, 1] * sheeps[i, 1]
+                    relative_to_sheeps[i, 0] * relative_to_sheeps[i, 0] + relative_to_sheeps[i, 1] * relative_to_sheeps[i, 1]
                 )
             cercanas_idx = np.empty(pers_ovejas, np.int64)
             for i in range(pers_ovejas):  # esto reemplaza a np.argpartition
