@@ -86,7 +86,8 @@ class NNShepherdModel:
             sheepsDists = np.empty(n_sheeps, dtype=np.float64)
             for i in range(n_sheeps):
                 sheepsDists[i] = (
-                    relative_to_sheeps[i, 0] * relative_to_sheeps[i, 0] + relative_to_sheeps[i, 1] * relative_to_sheeps[i, 1]
+                    relative_to_sheeps[i, 0] * relative_to_sheeps[i, 0]
+                    + relative_to_sheeps[i, 1] * relative_to_sheeps[i, 1]
                 )
             cercanas_idx = np.empty(pers_ovejas, np.int64)
             for i in range(pers_ovejas):  # esto reemplaza a np.argpartition
