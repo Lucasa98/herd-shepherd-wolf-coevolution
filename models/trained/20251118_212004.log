@@ -1,0 +1,41 @@
+INFO:__main__:cargando config.yaml ...
+INFO:__main__:config.yaml cargado ...
+INFO:__main__:iniciando workers ...
+INFO:__main__:workers inicializados ...
+INFO:__main__:inicializando poblacion ...
+INFO:__main__:poblacion inicializada ...
+INFO:__main__:primer fitness: 1.89427, {'cohesion': '0.85889', 'to_goal': '0.13315', 'inside': '0.00000', 'driving': '0.90222', 'finish': '0.00000'}
+INFO:__main__:iniciando evolucion
+INFO:__main__:generacion 2 - fitness superado: 1.97614, {'cohesion': '0.86345', 'to_goal': '0.14269', 'inside': '0.02222', 'driving': '0.94778', 'finish': '0.00000'}
+INFO:__main__:generacion 3 - fitness superado: 2.17981, {'cohesion': '0.87527', 'to_goal': '0.23676', 'inside': '0.00000', 'driving': '1.06778', 'finish': '0.00000'}
+INFO:__main__:generacion 9 - fitness superado: 2.56197, {'cohesion': '0.87248', 'to_goal': '0.36274', 'inside': '0.01111', 'driving': '1.31564', 'finish': '0.00000'}
+INFO:__main__:generacion 27 - fitness superado: 2.67431, {'cohesion': '0.87268', 'to_goal': '0.34281', 'inside': '0.01111', 'driving': '1.44771', 'finish': '0.00000'}
+INFO:__main__:generacion 28 - fitness superado: 2.81519, {'cohesion': '0.90206', 'to_goal': '0.37926', 'inside': '0.00000', 'driving': '1.53388', 'finish': '0.00000'}
+INFO:__main__:generacion 30 - fitness superado: 2.99741, {'cohesion': '0.88708', 'to_goal': '0.52876', 'inside': '0.00000', 'driving': '1.58157', 'finish': '0.00000'}
+INFO:__main__:generacion 33 - fitness superado: 3.00927, {'cohesion': '0.88496', 'to_goal': '0.53962', 'inside': '0.00000', 'driving': '1.58468', 'finish': '0.00000'}
+INFO:__main__:generacion 38 - fitness superado: 3.03102, {'cohesion': '0.89811', 'to_goal': '0.61673', 'inside': '0.05556', 'driving': '1.46063', 'finish': '0.00000'}
+INFO:__main__:generacion 69 - fitness superado: 3.06225, {'cohesion': '0.90087', 'to_goal': '0.54922', 'inside': '0.00000', 'driving': '1.61216', 'finish': '0.00000'}
+INFO:__main__:generacion 73 - fitness superado: 3.14793, {'cohesion': '0.86897', 'to_goal': '0.59926', 'inside': '0.00000', 'driving': '1.67971', 'finish': '0.00000'}
+INFO:__main__:generacion 97 - fitness superado: 3.18991, {'cohesion': '0.88496', 'to_goal': '0.55892', 'inside': '0.00000', 'driving': '1.74603', 'finish': '0.00000'}
+INFO:__main__:generacion 228 - fitness superado: 3.36962, {'cohesion': '0.92115', 'to_goal': '0.78688', 'inside': '0.00000', 'driving': '1.66160', 'finish': '0.00000'}
+INFO:__main__:generacion 293 - fitness superado: 3.38979, {'cohesion': '0.91548', 'to_goal': '0.83299', 'inside': '0.01111', 'driving': '1.63022', 'finish': '0.00000'}
+INFO:__main__:generacion 449 - fitness superado: 3.45437, {'cohesion': '0.88897', 'to_goal': '0.93340', 'inside': '0.00000', 'driving': '1.63199', 'finish': '0.00000'}
+INFO:__main__:generacion 636 - fitness superado: 3.46946, {'cohesion': '0.96459', 'to_goal': '0.85508', 'inside': '0.00000', 'driving': '1.64979', 'finish': '0.00000'}
+INFO:__main__:generacion 651 - fitness superado: 3.59515, {'cohesion': '0.92616', 'to_goal': '0.88354', 'inside': '0.00000', 'driving': '1.78544', 'finish': '0.00000'}
+INFO:__main__:generacion 724 - fitness superado: 3.60723, {'cohesion': '0.90383', 'to_goal': '1.12375', 'inside': '0.00000', 'driving': '1.57965', 'finish': '0.00000'}
+INFO:__main__:generacion 740 - fitness superado: 3.75398, {'cohesion': '0.87263', 'to_goal': '1.23425', 'inside': '0.00000', 'driving': '1.64710', 'finish': '0.00000'}
+INFO:__main__:generacion 770 - fitness superado: 3.76384, {'cohesion': '0.93145', 'to_goal': '1.19929', 'inside': '0.00000', 'driving': '1.63311', 'finish': '0.00000'}
+INFO:__main__:generacion 867 - fitness superado: 3.80483, {'cohesion': '0.89235', 'to_goal': '1.27188', 'inside': '0.00000', 'driving': '1.64060', 'finish': '0.00000'}
+INFO:__main__:generacion 924 - fitness superado: 3.86424, {'cohesion': '0.94822', 'to_goal': '1.24303', 'inside': '0.00000', 'driving': '1.67299', 'finish': '0.00000'}
+INFO:__main__:generacion 978 - fitness superado: 3.89775, {'cohesion': '0.90336', 'to_goal': '1.29401', 'inside': '0.00000', 'driving': '1.70038', 'finish': '0.00000'}
+INFO:__main__:generacion 983 - fitness superado: 4.05127, {'cohesion': '0.88565', 'to_goal': '1.44106', 'inside': '0.00000', 'driving': '1.72456', 'finish': '0.00000'}
+INFO:__main__:generacion 1021 - fitness superado: 4.46915, {'cohesion': '0.89647', 'to_goal': '1.77596', 'inside': '0.00000', 'driving': '1.79673', 'finish': '0.00000'}
+INFO:__main__:generacion 1843 - fitness superado: 4.58533, {'cohesion': '0.96361', 'to_goal': '2.05416', 'inside': '0.00000', 'driving': '1.56756', 'finish': '0.00000'}
+INFO:__main__:generacion 1846 - fitness superado: 4.88848, {'cohesion': '0.96977', 'to_goal': '2.23594', 'inside': '0.00000', 'driving': '1.68278', 'finish': '0.00000'}
+INFO:__main__:generacion 1847 - fitness superado: 4.89209, {'cohesion': '0.97248', 'to_goal': '2.21205', 'inside': '0.00000', 'driving': '1.70756', 'finish': '0.00000'}
+INFO:__main__:generacion 1876 - fitness superado: 4.89900, {'cohesion': '0.98375', 'to_goal': '2.16734', 'inside': '0.00000', 'driving': '1.74790', 'finish': '0.00000'}
+INFO:__main__:generacion 1924 - fitness superado: 5.13147, {'cohesion': '0.98068', 'to_goal': '2.51794', 'inside': '0.00000', 'driving': '1.63285', 'finish': '0.00000'}
+INFO:__main__:deteniendo workers
+INFO:__main__:guardando modelo de mejor individuo
+INFO:__main__:guardado modelo 20251118_212004.npy
+INFO:__main__:Programa finalizado en 566.231175138034 minutos
