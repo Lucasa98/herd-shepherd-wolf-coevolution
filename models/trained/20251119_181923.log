@@ -1,0 +1,23 @@
+INFO:__main__:cargando config.yaml ...
+INFO:__main__:config.yaml cargado ...
+INFO:__main__:iniciando workers ...
+INFO:__main__:workers inicializados ...
+INFO:__main__:inicializando poblacion ...
+INFO:__main__:poblacion inicializada ...
+INFO:__main__:primer fitness: 1.26580, {'cohesion': '0.85697', 'to_goal': '0.00011', 'inside': '0.00150', 'driving': '0.40722', 'finish': '0.00000'}
+INFO:__main__:iniciando evolucion
+INFO:__main__:generacion 1 - fitness superado: 1.28018, {'cohesion': '0.85522', 'to_goal': '0.00013', 'inside': '0.12483', 'driving': '0.30000', 'finish': '0.00000'}
+INFO:__main__:generacion 4 - fitness superado: 1.31967, {'cohesion': '0.84516', 'to_goal': '0.00006', 'inside': '0.14333', 'driving': '0.33111', 'finish': '0.00000'}
+INFO:__main__:generacion 11 - fitness superado: 1.46010, {'cohesion': '0.88023', 'to_goal': '0.00026', 'inside': '0.00350', 'driving': '0.57611', 'finish': '0.00000'}
+INFO:__main__:generacion 12 - fitness superado: 1.55040, {'cohesion': '0.86507', 'to_goal': '0.00022', 'inside': '0.07067', 'driving': '0.61444', 'finish': '0.00000'}
+INFO:__main__:generacion 23 - fitness superado: 1.67683, {'cohesion': '0.86841', 'to_goal': '0.00037', 'inside': '0.03583', 'driving': '0.77222', 'finish': '0.00000'}
+INFO:__main__:generacion 29 - fitness superado: 1.74726, {'cohesion': '0.87782', 'to_goal': '0.00049', 'inside': '0.04950', 'driving': '0.81944', 'finish': '0.00000'}
+INFO:__main__:generacion 34 - fitness superado: 1.77110, {'cohesion': '0.90313', 'to_goal': '0.00041', 'inside': '0.08200', 'driving': '0.78556', 'finish': '0.00000'}
+INFO:__main__:generacion 206 - fitness superado: 1.79259, {'cohesion': '0.89134', 'to_goal': '0.00070', 'inside': '0.03833', 'driving': '0.86222', 'finish': '0.00000'}
+INFO:__main__:generacion 329 - fitness superado: 1.79317, {'cohesion': '0.88970', 'to_goal': '0.00063', 'inside': '0.02117', 'driving': '0.88167', 'finish': '0.00000'}
+INFO:__main__:generacion 337 - fitness superado: 1.79577, {'cohesion': '0.87917', 'to_goal': '0.00054', 'inside': '0.04050', 'driving': '0.87556', 'finish': '0.00000'}
+INFO:__main__:evolucion terminada exitosamente
+INFO:__main__:deteniendo workers
+INFO:__main__:guardando modelo de mejor individuo
+INFO:__main__:guardado modelo 20251119_181923.npy
+INFO:__main__:Programa finalizado en 56.09614999646668 minutos

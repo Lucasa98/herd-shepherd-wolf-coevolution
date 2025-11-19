@@ -29,19 +29,19 @@ hidden_lay_2: 128  # neuronas de la segunda capa oculta
 
 # EVOLUCION
 elite: 1  # 0: sin elite, 1: con elite
-poblacion: 500  # individuos por poblacion
-generaciones: 2000  # generaciones
+poblacion: 100  # individuos por poblacion
+generaciones: 600  # generaciones
 mutacion: 0.05  # probabilidad de mutacion
-progenitores: 50  # progenitores por generacion
+progenitores: 10  # progenitores por generacion
 brecha_generacional: 5  # progenitores que pasan a la siguiente generacion
 
 # FITNESS
-redundancia: 1  # numero de veces que se REPITE la simulacion para promediar
-max_steps_ini: 500  # numero maximo de pasos por simulacion (inicial)
-max_steps: 800  # numero maximo de pasos por simulacion (final)
+redundancia: 8  # numero de veces que se REPITE la simulacion para promediar
+max_steps_ini: 200  # numero maximo de pasos por simulacion (inicial)
+max_steps: 200  # numero maximo de pasos por simulacion (final)
 w_cohesion: 1.0  # peso de cohesion en fitness
-w_goal: 3.0  # peso de distancia de centroide a targe en fitness
-w_inside: 1.0  # peso de numero de ovejas dentro en fitness
-w_drive: 2.0  # peso de tasa de driving en fitness
-w_finish: 0.0  # peso de finalizar en fitness
+w_goal: 2.0  # peso de distancia de centroide a targe en fitness
+w_inside: 3.0  # peso de numero de ovejas dentro en fitness
+w_drive: 1.0  # peso de tasa de driving en fitness
+w_finish: 2.0  # peso de finalizar en fitness
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping
