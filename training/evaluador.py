@@ -55,10 +55,10 @@ class Evaluador:
 
             # (2) progreso de la distancia inicial vs la distancia final al objetivo
             _, dist = self.world.cetroideYDistanciaCentroideObjetivo()
-            to_goal_progress_term += max(0.0, (init_dist - dist) / init_dist)
+            to_goal_progress_term += (init_dist - dist) / self.world.diag
 
             # (3) ovejas en el objetivo
-            inside_term += self.world.ovejasDentroRate()  # already 0..1
+            inside_term += self.world.totalOvejasDentroMean()
 
             # (4) driving (0..1 scaled)
             driving_term += self.world.drivingRate()
