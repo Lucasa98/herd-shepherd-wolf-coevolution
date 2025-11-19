@@ -17,7 +17,7 @@ choice = int(input("> "))
 
 # ===== cargar historial =====
 
-base_name = trained_models[choice - 1]
+base_name = trained_models[choice]
 history_path = os.path.join(trained_dir, base_name)
 fit_history = np.load(history_path)
 avg = fit_history[:, 0]
