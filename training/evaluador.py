@@ -58,7 +58,7 @@ class Evaluador:
             to_goal_progress_term += (init_dist - dist) / self.world.diag
 
             # (3) ovejas en el objetivo
-            inside_term += self.world.totalOvejasDentroMean()
+            inside_term += self.world.maxOvejasDentro()
 
             # (4) driving (0..1 scaled)
             driving_term += self.world.drivingRate()

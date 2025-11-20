@@ -1,0 +1,20 @@
+INFO:__main__:cargando config.yaml ...
+INFO:__main__:config.yaml cargado ...
+INFO:__main__:iniciando workers ...
+INFO:__main__:workers inicializados ...
+INFO:__main__:inicializando poblacion ...
+INFO:__main__:poblacion inicializada ...
+INFO:__main__:primer fitness: 0.80157, {'cohesion': '0.17220', 'to_goal': '-0.00007', 'inside': '0.54444', 'driving': '0.08500', 'finish': '0.00000'}
+INFO:__main__:iniciando evolucion
+INFO:__main__:generacion 4 - fitness superado: 0.88150, {'cohesion': '0.16815', 'to_goal': '0.00001', 'inside': '0.62222', 'driving': '0.09111', 'finish': '0.00000'}
+INFO:__main__:generacion 6 - fitness superado: 0.90466, {'cohesion': '0.16637', 'to_goal': '-0.00004', 'inside': '0.62222', 'driving': '0.11611', 'finish': '0.00000'}
+INFO:__main__:generacion 10 - fitness superado: 1.02453, {'cohesion': '0.17090', 'to_goal': '0.00002', 'inside': '0.62222', 'driving': '0.23139', 'finish': '0.00000'}
+INFO:__main__:generacion 14 - fitness superado: 1.06270, {'cohesion': '0.16427', 'to_goal': '-0.00046', 'inside': '0.70000', 'driving': '0.19889', 'finish': '0.00000'}
+INFO:__main__:generacion 44 - fitness superado: 1.16764, {'cohesion': '0.17249', 'to_goal': '-0.00041', 'inside': '0.85556', 'driving': '0.14000', 'finish': '0.00000'}
+INFO:__main__:generacion 82 - fitness superado: 1.18112, {'cohesion': '0.16737', 'to_goal': '-0.00013', 'inside': '0.93333', 'driving': '0.08056', 'finish': '0.00000'}
+INFO:__main__:generacion 100 - fitness superado: 1.19485, {'cohesion': '0.17345', 'to_goal': '0.00001', 'inside': '0.77778', 'driving': '0.24361', 'finish': '0.00000'}
+INFO:__main__:evolucion terminada exitosamente
+INFO:__main__:deteniendo workers
+INFO:__main__:guardando modelo de mejor individuo
+INFO:__main__:guardado modelo 20251120_083455.npy
+INFO:__main__:Programa finalizado en 32.10883429400007 minutos

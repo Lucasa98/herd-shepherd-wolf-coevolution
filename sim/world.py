@@ -23,7 +23,7 @@ class World:
             self.params["N"] + self.params["N_pastores"], dtype=Entity
         )
         self.ticks_driving = 0
-        self.acc_ovejas_dentro = 0
+        self.max_ovejas_dentro = 0
 
         # ===== Ovejas =====
         sheepModel = StrombomSheep(params, rng)
@@ -57,7 +57,7 @@ class World:
         self.ticks = 0
         self.ticks_to_finish = None
         self.ticks_driving = 0
-        self.acc_ovejas_dentro = 0
+        self.max_ovejas_dentro = 0
 
         # ===== Ovejas =====
         # solo reubicamos
@@ -161,7 +161,9 @@ class World:
         ):
             self.ticks_driving += 1
 
-        self.acc_ovejas_dentro += self.countOvejasDentro()
+        ovejas_dentro = self.countOvejasDentro()
+        if ovejas_dentro > self.max_ovejas_dentro:
+            self.max_ovejas_dentro = ovejas_dentro
 
         if (self.ticks_to_finish is None) and self.shepherd_finished():
             self.ticks_to_finish = self.ticks
@@ -207,8 +209,8 @@ class World:
         mean[1] = np.mean(ovejasPos[:, 1])
         return mean
 
-    def totalOvejasDentroMean(self):
-        return self.acc_ovejas_dentro / (self.ticks * self.params["N"])
+    def maxOvejasDentro(self):
+        return self.max_ovejas_dentro / self.params["N"]
 
     def countOvejasDentro(self):
         return self.countOvejasDentroStatic(

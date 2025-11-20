@@ -120,8 +120,8 @@ class NNShepherdModel:
             shepherdsDists = np.empty(n_shepherds, dtype=np.float64)
             for i in range(n_shepherds):
                 shepherdsDists[i] = (
-                    shepherds[i, 0] * shepherds[i, 0]
-                    + shepherds[i, 1] * shepherds[i, 1]
+                    relative_to_shepherds[i, 0] * relative_to_shepherds[i, 0]
+                    + relative_to_shepherds[i, 1] * relative_to_shepherds[i, 1]
                 )
             cercanos_idx = np.empty(pers_pastores, np.int64)
             for i in range(pers_pastores):  # esto reemplaza a np.argpartition
@@ -145,7 +145,7 @@ class NNShepherdModel:
         centroide: np.ndarray[np.float64],
         diag,
     ):
-        return (shepherdPosition - centroide) / diag
+        return (centroide - shepherdPosition) / diag
 
     @staticmethod
     @jit(nopython=True)
@@ -154,7 +154,7 @@ class NNShepherdModel:
         objetivo: np.ndarray[np.float64],
         diag,
     ):
-        return (shepherdPosition - objetivo) / diag
+        return (objetivo - shepherdPosition) / diag
 
 
 class ShepherdNN(nn.Module):

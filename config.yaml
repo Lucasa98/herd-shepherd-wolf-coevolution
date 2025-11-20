@@ -4,6 +4,7 @@ w_h: 300  # alto
 obj_r: 25  # radio del objetivo
 obj_x: 50  # coordenadas fijas de objetivo (-1: aleatorio)
 obj_y: 50  # coordenadas fijas de objetivo (-1: aleatorio)
+
 # OVEJAS
 N: 10  # numero de ovejas
 r_s: 65.0  # radio de repulsion del pastor
@@ -24,24 +25,24 @@ min_w: -15  # valor minimo de peso
 max_w: 16  # valor maximo de peso
 pers_ovejas: 5  # ovejas percibidas por el pastor
 pers_pastores: 0  # otros pastores percibidos por el pastor
-hidden_lay_1: 256  # neuronas de la primer capa oculta
-hidden_lay_2: 128  # neuronas de la segunda capa oculta
+hidden_lay_1: 128  # neuronas de la primer capa oculta
+hidden_lay_2: 64  # neuronas de la segunda capa oculta
 
 # EVOLUCION
 elite: 1  # 0: sin elite, 1: con elite
-poblacion: 100  # individuos por poblacion
-generaciones: 600  # generaciones
+poblacion: 400  # individuos por poblacion
+generaciones: 100  # generaciones
 mutacion: 0.05  # probabilidad de mutacion
-progenitores: 10  # progenitores por generacion
+progenitores: 40  # progenitores por generacion
 brecha_generacional: 5  # progenitores que pasan a la siguiente generacion
 
 # FITNESS
-redundancia: 8  # numero de veces que se REPITE la simulacion para promediar
+redundancia: 4  # numero de veces que se REPITE la simulacion para promediar
 max_steps_ini: 200  # numero maximo de pasos por simulacion (inicial)
 max_steps: 200  # numero maximo de pasos por simulacion (final)
-w_cohesion: 1.0  # peso de cohesion en fitness
-w_goal: 2.0  # peso de distancia de centroide a targe en fitness
-w_inside: 3.0  # peso de numero de ovejas dentro en fitness
-w_drive: 1.0  # peso de tasa de driving en fitness
-w_finish: 2.0  # peso de finalizar en fitness
+w_cohesion: 0.2  # peso de cohesion en fitness
+w_goal: 5.0  # peso de distancia de centroide a targe en fitness
+w_inside: 7.0  # peso de numero de ovejas dentro en fitness
+w_drive: 0.5  # peso de tasa de driving en fitness
+w_finish: 10.0  # peso de finalizar en fitness
 max_reps: 9  # maximo numero de veces que puede repetir posicion hasta early-stopping
