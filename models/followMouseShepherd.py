@@ -14,8 +14,9 @@ class FollowMouseShepherd:
         shepherd: Shepherd,
         sheeps: list[Sheep],
         shepherds: list[Shepherd],
-        objetivo_c,
-        centroide,
+        objetivo_c: np.ndarray[np.float64],
+        centroide: np.ndarray[np.float64],
+        diag,
     ):
         p = self.params
         mx, my = pygame.mouse.get_pos()
