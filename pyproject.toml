@@ -24,10 +24,6 @@ black = "^24.0.0"
 ruff = "^0.5.0"
 pytest = "^8.0.0"
 
-[tool.poetry.scripts]
-run-sim = "scripts.run_simulation:main"
-train-agents = "scripts.train_agents:main"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
