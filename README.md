@@ -14,9 +14,9 @@ Trabajo Final Creativo de Inteligencia Computacion (2025, FICH-UNL)
 ## Uso
 
 - Ejecutar los scripts **SIEMPRE DESDE EL ENTORNO VIRTUAL**.
-- Activar el entorno con `poetry shell` o ejecutar codigo directo con `poetry run python -m scripts.run_sim`.
-- Para entrenar un modelo, usar `scripts/train_model.py`.
-- Para correr la simulacion (con visualizador), usar `scripts/run_sim.py`.
+- Para entrenar un modelo, modificar `config.yaml` a gusto y usar `poetry run python -m scripts.run_train`.
+- Para correr la simulacion (con visualizador), usar `poetry run python -m scripts.run_sim`.
+- Para graficar el fitness: `poetry run python -m scripts.plot`
 # Referencia
 
 - [Docs PyTorch](https://docs.pytorch.org/docs/stable/index.html)
