@@ -153,6 +153,7 @@ if __name__ == "__main__":  # esto lo necesita multiprocessing para no joder
                     new_poblacion[i, :c1] = progenitores[p1, :c1]  # antes de c1
                     new_poblacion[i, c1:c2] = progenitores[p2, c1:c2]  # c1 a c2
                     new_poblacion[i, c2:] = progenitores[p1, c2:]  # de c2 al final
+                    i += 1
 
             # mutar a nivel de gen
             if N_mut > 0:
